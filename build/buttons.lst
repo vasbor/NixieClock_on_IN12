@@ -1,0 +1,1154 @@
+ARM GAS  C:\Users\bvv64\AppData\Local\Temp\cceCw12b.s 			page 1
+
+
+   1              		.cpu cortex-m0
+   2              		.arch armv6s-m
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 0
+  12              		.eabi_attribute 18, 4
+  13              		.file	"buttons.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.init_BUTTONS,"ax",%progbits
+  18              		.align	1
+  19              		.global	init_BUTTONS
+  20              		.syntax unified
+  21              		.code	16
+  22              		.thumb_func
+  24              	init_BUTTONS:
+  25              	.LFB334:
+  26              		.file 1 "Core/Src/buttons.c"
+   1:Core/Src/buttons.c **** /*
+   2:Core/Src/buttons.c **** 
+   3:Core/Src/buttons.c **** */
+   4:Core/Src/buttons.c **** 
+   5:Core/Src/buttons.c **** #include "buttons.h"
+   6:Core/Src/buttons.c **** 
+   7:Core/Src/buttons.c **** t_buttonState buttonSet, buttonSelect;
+   8:Core/Src/buttons.c **** uint16_t countDeBouce;          //счетчик для антидребезга
+   9:Core/Src/buttons.c **** t_key lastKey;                  //код нажатой кнопки
+  10:Core/Src/buttons.c **** const uint16_t MAX_COUNT = 2;   //временная задержка для антидребезк
+  11:Core/Src/buttons.c **** 
+  12:Core/Src/buttons.c **** void init_BUTTONS(void)
+  13:Core/Src/buttons.c **** {
+  27              		.loc 1 13 1 view -0
+  28              		.cfi_startproc
+  29              		@ args = 0, pretend = 0, frame = 0
+  30              		@ frame_needed = 0, uses_anonymous_args = 0
+  31 0000 10B5     		push	{r4, lr}
+  32              	.LCFI0:
+  33              		.cfi_def_cfa_offset 8
+  34              		.cfi_offset 4, -8
+  35              		.cfi_offset 14, -4
+  14:Core/Src/buttons.c ****   LL_GPIO_SetPinPull(GPIOA, LL_GPIO_PIN_2, LL_GPIO_PULL_UP);
+  36              		.loc 1 14 3 view .LVU1
+  37              	.LVL0:
+  38              	.LBB10:
+  39              	.LBI10:
+  40              		.file 2 "Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h"
+   1:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** /**
+   2:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   ******************************************************************************
+   3:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @file    stm32f0xx_ll_gpio.h
+   4:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @author  MCD Application Team
+ARM GAS  C:\Users\bvv64\AppData\Local\Temp\cceCw12b.s 			page 2
+
+
+   5:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @brief   Header file of GPIO LL module.
+   6:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   ******************************************************************************
+   7:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @attention
+   8:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *
+   9:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * <h2><center>&copy; Copyright (c) 2016 STMicroelectronics.
+  10:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * All rights reserved.</center></h2>
+  11:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *
+  12:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * This software component is licensed by ST under BSD 3-Clause license,
+  13:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * the "License"; You may not use this file except in compliance with the
+  14:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * License. You may obtain a copy of the License at:
+  15:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *                        opensource.org/licenses/BSD-3-Clause
+  16:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *
+  17:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   ******************************************************************************
+  18:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   */
+  19:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** 
+  20:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** /* Define to prevent recursive inclusion -------------------------------------*/
+  21:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** #ifndef __STM32F0xx_LL_GPIO_H
+  22:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** #define __STM32F0xx_LL_GPIO_H
+  23:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** 
+  24:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** #ifdef __cplusplus
+  25:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** extern "C" {
+  26:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** #endif
+  27:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** 
+  28:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** /* Includes ------------------------------------------------------------------*/
+  29:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** #include "stm32f0xx.h"
+  30:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** 
+  31:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** /** @addtogroup STM32F0xx_LL_Driver
+  32:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @{
+  33:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   */
+  34:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** 
+  35:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** #if defined (GPIOA) || defined (GPIOB) || defined (GPIOC) || defined (GPIOD) || defined (GPIOE) || 
+  36:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** 
+  37:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** /** @defgroup GPIO_LL GPIO
+  38:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @{
+  39:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   */
+  40:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** 
+  41:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** /* Private types -------------------------------------------------------------*/
+  42:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** /* Private variables ---------------------------------------------------------*/
+  43:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** /* Private constants ---------------------------------------------------------*/
+  44:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** /* Private macros ------------------------------------------------------------*/
+  45:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** #if defined(USE_FULL_LL_DRIVER)
+  46:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** /** @defgroup GPIO_LL_Private_Macros GPIO Private Macros
+  47:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @{
+  48:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   */
+  49:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** 
+  50:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** /**
+  51:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @}
+  52:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   */
+  53:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** #endif /*USE_FULL_LL_DRIVER*/
+  54:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** 
+  55:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** /* Exported types ------------------------------------------------------------*/
+  56:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** #if defined(USE_FULL_LL_DRIVER)
+  57:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** /** @defgroup GPIO_LL_ES_INIT GPIO Exported Init structures
+  58:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @{
+  59:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   */
+  60:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** 
+  61:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** /**
+ARM GAS  C:\Users\bvv64\AppData\Local\Temp\cceCw12b.s 			page 3
+
+
+  62:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @brief LL GPIO Init Structure definition
+  63:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   */
+  64:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** typedef struct
+  65:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** {
+  66:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   uint32_t Pin;          /*!< Specifies the GPIO pins to be configured.
+  67:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****                               This parameter can be any value of @ref GPIO_LL_EC_PIN */
+  68:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** 
+  69:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   uint32_t Mode;         /*!< Specifies the operating mode for the selected pins.
+  70:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****                               This parameter can be a value of @ref GPIO_LL_EC_MODE.
+  71:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** 
+  72:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****                               GPIO HW configuration can be modified afterwards using unitary functi
+  73:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** 
+  74:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   uint32_t Speed;        /*!< Specifies the speed for the selected pins.
+  75:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****                               This parameter can be a value of @ref GPIO_LL_EC_SPEED.
+  76:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** 
+  77:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****                               GPIO HW configuration can be modified afterwards using unitary functi
+  78:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** 
+  79:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   uint32_t OutputType;   /*!< Specifies the operating output type for the selected pins.
+  80:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****                               This parameter can be a value of @ref GPIO_LL_EC_OUTPUT.
+  81:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** 
+  82:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****                               GPIO HW configuration can be modified afterwards using unitary functi
+  83:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** 
+  84:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   uint32_t Pull;         /*!< Specifies the operating Pull-up/Pull down for the selected pins.
+  85:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****                               This parameter can be a value of @ref GPIO_LL_EC_PULL.
+  86:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** 
+  87:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****                               GPIO HW configuration can be modified afterwards using unitary functi
+  88:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** 
+  89:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   uint32_t Alternate;    /*!< Specifies the Peripheral to be connected to the selected pins.
+  90:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****                               This parameter can be a value of @ref GPIO_LL_EC_AF.
+  91:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** 
+  92:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****                               GPIO HW configuration can be modified afterwards using unitary functi
+  93:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** } LL_GPIO_InitTypeDef;
+  94:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** 
+  95:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** /**
+  96:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @}
+  97:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   */
+  98:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** #endif /* USE_FULL_LL_DRIVER */
+  99:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** 
+ 100:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** /* Exported constants --------------------------------------------------------*/
+ 101:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** /** @defgroup GPIO_LL_Exported_Constants GPIO Exported Constants
+ 102:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @{
+ 103:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   */
+ 104:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** 
+ 105:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** /** @defgroup GPIO_LL_EC_PIN PIN
+ 106:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @{
+ 107:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   */
+ 108:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** #define LL_GPIO_PIN_0                      GPIO_BSRR_BS_0 /*!< Select pin 0 */
+ 109:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** #define LL_GPIO_PIN_1                      GPIO_BSRR_BS_1 /*!< Select pin 1 */
+ 110:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** #define LL_GPIO_PIN_2                      GPIO_BSRR_BS_2 /*!< Select pin 2 */
+ 111:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** #define LL_GPIO_PIN_3                      GPIO_BSRR_BS_3 /*!< Select pin 3 */
+ 112:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** #define LL_GPIO_PIN_4                      GPIO_BSRR_BS_4 /*!< Select pin 4 */
+ 113:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** #define LL_GPIO_PIN_5                      GPIO_BSRR_BS_5 /*!< Select pin 5 */
+ 114:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** #define LL_GPIO_PIN_6                      GPIO_BSRR_BS_6 /*!< Select pin 6 */
+ 115:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** #define LL_GPIO_PIN_7                      GPIO_BSRR_BS_7 /*!< Select pin 7 */
+ 116:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** #define LL_GPIO_PIN_8                      GPIO_BSRR_BS_8 /*!< Select pin 8 */
+ 117:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** #define LL_GPIO_PIN_9                      GPIO_BSRR_BS_9 /*!< Select pin 9 */
+ 118:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** #define LL_GPIO_PIN_10                     GPIO_BSRR_BS_10 /*!< Select pin 10 */
+ARM GAS  C:\Users\bvv64\AppData\Local\Temp\cceCw12b.s 			page 4
+
+
+ 119:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** #define LL_GPIO_PIN_11                     GPIO_BSRR_BS_11 /*!< Select pin 11 */
+ 120:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** #define LL_GPIO_PIN_12                     GPIO_BSRR_BS_12 /*!< Select pin 12 */
+ 121:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** #define LL_GPIO_PIN_13                     GPIO_BSRR_BS_13 /*!< Select pin 13 */
+ 122:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** #define LL_GPIO_PIN_14                     GPIO_BSRR_BS_14 /*!< Select pin 14 */
+ 123:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** #define LL_GPIO_PIN_15                     GPIO_BSRR_BS_15 /*!< Select pin 15 */
+ 124:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** #define LL_GPIO_PIN_ALL                    (GPIO_BSRR_BS_0 | GPIO_BSRR_BS_1  | GPIO_BSRR_BS_2  | \
+ 125:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****                                            GPIO_BSRR_BS_3  | GPIO_BSRR_BS_4  | GPIO_BSRR_BS_5  | \
+ 126:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****                                            GPIO_BSRR_BS_6  | GPIO_BSRR_BS_7  | GPIO_BSRR_BS_8  | \
+ 127:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****                                            GPIO_BSRR_BS_9  | GPIO_BSRR_BS_10 | GPIO_BSRR_BS_11 | \
+ 128:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****                                            GPIO_BSRR_BS_12 | GPIO_BSRR_BS_13 | GPIO_BSRR_BS_14 | \
+ 129:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****                                            GPIO_BSRR_BS_15) /*!< Select all pins */
+ 130:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** /**
+ 131:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @}
+ 132:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   */
+ 133:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** 
+ 134:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** /** @defgroup GPIO_LL_EC_MODE Mode
+ 135:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @{
+ 136:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   */
+ 137:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** #define LL_GPIO_MODE_INPUT                 (0x00000000U) /*!< Select input mode */
+ 138:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** #define LL_GPIO_MODE_OUTPUT                GPIO_MODER_MODER0_0  /*!< Select output mode */
+ 139:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** #define LL_GPIO_MODE_ALTERNATE             GPIO_MODER_MODER0_1  /*!< Select alternate function mode
+ 140:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** #define LL_GPIO_MODE_ANALOG                GPIO_MODER_MODER0    /*!< Select analog mode */
+ 141:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** /**
+ 142:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @}
+ 143:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   */
+ 144:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** 
+ 145:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** /** @defgroup GPIO_LL_EC_OUTPUT Output Type
+ 146:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @{
+ 147:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   */
+ 148:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** #define LL_GPIO_OUTPUT_PUSHPULL            (0x00000000U) /*!< Select push-pull as output type */
+ 149:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** #define LL_GPIO_OUTPUT_OPENDRAIN           GPIO_OTYPER_OT_0 /*!< Select open-drain as output type *
+ 150:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** /**
+ 151:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @}
+ 152:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   */
+ 153:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** 
+ 154:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** /** @defgroup GPIO_LL_EC_SPEED Output Speed
+ 155:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @{
+ 156:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   */
+ 157:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** #define LL_GPIO_SPEED_FREQ_LOW             (0x00000000U) /*!< Select I/O low output speed    */
+ 158:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** #define LL_GPIO_SPEED_FREQ_MEDIUM          GPIO_OSPEEDR_OSPEEDR0_0 /*!< Select I/O medium output sp
+ 159:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** #define LL_GPIO_SPEED_FREQ_HIGH            GPIO_OSPEEDR_OSPEEDR0   /*!< Select I/O high output spee
+ 160:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** /**
+ 161:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @}
+ 162:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   */
+ 163:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** #define LL_GPIO_SPEED_LOW                  LL_GPIO_SPEED_FREQ_LOW
+ 164:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** #define LL_GPIO_SPEED_MEDIUM               LL_GPIO_SPEED_FREQ_MEDIUM
+ 165:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** #define LL_GPIO_SPEED_HIGH                 LL_GPIO_SPEED_FREQ_HIGH
+ 166:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** 
+ 167:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** /** @defgroup GPIO_LL_EC_PULL Pull Up Pull Down
+ 168:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @{
+ 169:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   */
+ 170:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** #define LL_GPIO_PULL_NO                    (0x00000000U) /*!< Select I/O no pull */
+ 171:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** #define LL_GPIO_PULL_UP                    GPIO_PUPDR_PUPDR0_0 /*!< Select I/O pull up */
+ 172:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** #define LL_GPIO_PULL_DOWN                  GPIO_PUPDR_PUPDR0_1 /*!< Select I/O pull down */
+ 173:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** /**
+ 174:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @}
+ 175:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   */
+ARM GAS  C:\Users\bvv64\AppData\Local\Temp\cceCw12b.s 			page 5
+
+
+ 176:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** 
+ 177:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** /** @defgroup GPIO_LL_EC_AF Alternate Function
+ 178:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @{
+ 179:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   */
+ 180:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** #define LL_GPIO_AF_0                       (0x0000000U) /*!< Select alternate function 0 */
+ 181:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** #define LL_GPIO_AF_1                       (0x0000001U) /*!< Select alternate function 1 */
+ 182:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** #define LL_GPIO_AF_2                       (0x0000002U) /*!< Select alternate function 2 */
+ 183:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** #define LL_GPIO_AF_3                       (0x0000003U) /*!< Select alternate function 3 */
+ 184:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** #define LL_GPIO_AF_4                       (0x0000004U) /*!< Select alternate function 4 */
+ 185:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** #define LL_GPIO_AF_5                       (0x0000005U) /*!< Select alternate function 5 */
+ 186:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** #define LL_GPIO_AF_6                       (0x0000006U) /*!< Select alternate function 6 */
+ 187:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** #define LL_GPIO_AF_7                       (0x0000007U) /*!< Select alternate function 7 */
+ 188:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** /**
+ 189:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @}
+ 190:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   */
+ 191:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** 
+ 192:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** /**
+ 193:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @}
+ 194:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   */
+ 195:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** 
+ 196:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** /* Exported macro ------------------------------------------------------------*/
+ 197:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** /** @defgroup GPIO_LL_Exported_Macros GPIO Exported Macros
+ 198:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @{
+ 199:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   */
+ 200:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** 
+ 201:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** /** @defgroup GPIO_LL_EM_WRITE_READ Common Write and read registers Macros
+ 202:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @{
+ 203:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   */
+ 204:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** 
+ 205:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** /**
+ 206:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @brief  Write a value in GPIO register
+ 207:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @param  __INSTANCE__ GPIO Instance
+ 208:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @param  __REG__ Register to be written
+ 209:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @param  __VALUE__ Value to be written in the register
+ 210:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @retval None
+ 211:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   */
+ 212:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** #define LL_GPIO_WriteReg(__INSTANCE__, __REG__, __VALUE__) WRITE_REG(__INSTANCE__->__REG__, (__VALU
+ 213:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** 
+ 214:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** /**
+ 215:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @brief  Read a value in GPIO register
+ 216:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @param  __INSTANCE__ GPIO Instance
+ 217:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @param  __REG__ Register to be read
+ 218:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @retval Register value
+ 219:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   */
+ 220:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** #define LL_GPIO_ReadReg(__INSTANCE__, __REG__) READ_REG(__INSTANCE__->__REG__)
+ 221:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** /**
+ 222:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @}
+ 223:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   */
+ 224:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** 
+ 225:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** /**
+ 226:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @}
+ 227:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   */
+ 228:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** 
+ 229:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** /* Exported functions --------------------------------------------------------*/
+ 230:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** /** @defgroup GPIO_LL_Exported_Functions GPIO Exported Functions
+ 231:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @{
+ 232:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   */
+ARM GAS  C:\Users\bvv64\AppData\Local\Temp\cceCw12b.s 			page 6
+
+
+ 233:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** 
+ 234:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** /** @defgroup GPIO_LL_EF_Port_Configuration Port Configuration
+ 235:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @{
+ 236:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   */
+ 237:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** 
+ 238:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** /**
+ 239:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @brief  Configure gpio mode for a dedicated pin on dedicated port.
+ 240:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @note   I/O mode can be Input mode, General purpose output, Alternate function mode or Analog.
+ 241:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @note   Warning: only one pin can be passed as parameter.
+ 242:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @rmtoll MODER        MODEy         LL_GPIO_SetPinMode
+ 243:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @param  GPIOx GPIO Port
+ 244:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @param  Pin This parameter can be one of the following values:
+ 245:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_0
+ 246:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_1
+ 247:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_2
+ 248:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_3
+ 249:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_4
+ 250:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_5
+ 251:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_6
+ 252:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_7
+ 253:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_8
+ 254:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_9
+ 255:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_10
+ 256:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_11
+ 257:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_12
+ 258:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_13
+ 259:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_14
+ 260:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_15
+ 261:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @param  Mode This parameter can be one of the following values:
+ 262:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_MODE_INPUT
+ 263:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_MODE_OUTPUT
+ 264:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_MODE_ALTERNATE
+ 265:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_MODE_ANALOG
+ 266:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @retval None
+ 267:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   */
+ 268:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** __STATIC_INLINE void LL_GPIO_SetPinMode(GPIO_TypeDef *GPIOx, uint32_t Pin, uint32_t Mode)
+ 269:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** {
+ 270:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   MODIFY_REG(GPIOx->MODER, ((Pin * Pin) * GPIO_MODER_MODER0), ((Pin * Pin) * Mode));
+ 271:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** }
+ 272:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** 
+ 273:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** /**
+ 274:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @brief  Return gpio mode for a dedicated pin on dedicated port.
+ 275:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @note   I/O mode can be Input mode, General purpose output, Alternate function mode or Analog.
+ 276:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @note   Warning: only one pin can be passed as parameter.
+ 277:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @rmtoll MODER        MODEy         LL_GPIO_GetPinMode
+ 278:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @param  GPIOx GPIO Port
+ 279:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @param  Pin This parameter can be one of the following values:
+ 280:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_0
+ 281:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_1
+ 282:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_2
+ 283:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_3
+ 284:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_4
+ 285:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_5
+ 286:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_6
+ 287:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_7
+ 288:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_8
+ 289:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_9
+ARM GAS  C:\Users\bvv64\AppData\Local\Temp\cceCw12b.s 			page 7
+
+
+ 290:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_10
+ 291:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_11
+ 292:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_12
+ 293:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_13
+ 294:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_14
+ 295:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_15
+ 296:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @retval Returned value can be one of the following values:
+ 297:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_MODE_INPUT
+ 298:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_MODE_OUTPUT
+ 299:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_MODE_ALTERNATE
+ 300:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_MODE_ANALOG
+ 301:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   */
+ 302:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** __STATIC_INLINE uint32_t LL_GPIO_GetPinMode(GPIO_TypeDef *GPIOx, uint32_t Pin)
+ 303:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** {
+ 304:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   return (uint32_t)(READ_BIT(GPIOx->MODER, ((Pin * Pin) * GPIO_MODER_MODER0)) / (Pin * Pin));
+ 305:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** }
+ 306:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** 
+ 307:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** /**
+ 308:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @brief  Configure gpio output type for several pins on dedicated port.
+ 309:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @note   Output type as to be set when gpio pin is in output or
+ 310:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         alternate modes. Possible type are Push-pull or Open-drain.
+ 311:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @rmtoll OTYPER       OTy           LL_GPIO_SetPinOutputType
+ 312:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @param  GPIOx GPIO Port
+ 313:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @param  PinMask This parameter can be a combination of the following values:
+ 314:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_0
+ 315:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_1
+ 316:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_2
+ 317:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_3
+ 318:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_4
+ 319:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_5
+ 320:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_6
+ 321:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_7
+ 322:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_8
+ 323:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_9
+ 324:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_10
+ 325:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_11
+ 326:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_12
+ 327:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_13
+ 328:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_14
+ 329:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_15
+ 330:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_ALL
+ 331:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @param  OutputType This parameter can be one of the following values:
+ 332:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_OUTPUT_PUSHPULL
+ 333:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_OUTPUT_OPENDRAIN
+ 334:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @retval None
+ 335:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   */
+ 336:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** __STATIC_INLINE void LL_GPIO_SetPinOutputType(GPIO_TypeDef *GPIOx, uint32_t PinMask, uint32_t Outpu
+ 337:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** {
+ 338:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   MODIFY_REG(GPIOx->OTYPER, PinMask, (PinMask * OutputType));
+ 339:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** }
+ 340:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** 
+ 341:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** /**
+ 342:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @brief  Return gpio output type for several pins on dedicated port.
+ 343:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @note   Output type as to be set when gpio pin is in output or
+ 344:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         alternate modes. Possible type are Push-pull or Open-drain.
+ 345:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @note   Warning: only one pin can be passed as parameter.
+ 346:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @rmtoll OTYPER       OTy           LL_GPIO_GetPinOutputType
+ARM GAS  C:\Users\bvv64\AppData\Local\Temp\cceCw12b.s 			page 8
+
+
+ 347:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @param  GPIOx GPIO Port
+ 348:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @param  Pin This parameter can be one of the following values:
+ 349:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_0
+ 350:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_1
+ 351:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_2
+ 352:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_3
+ 353:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_4
+ 354:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_5
+ 355:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_6
+ 356:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_7
+ 357:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_8
+ 358:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_9
+ 359:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_10
+ 360:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_11
+ 361:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_12
+ 362:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_13
+ 363:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_14
+ 364:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_15
+ 365:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_ALL
+ 366:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @retval Returned value can be one of the following values:
+ 367:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_OUTPUT_PUSHPULL
+ 368:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_OUTPUT_OPENDRAIN
+ 369:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   */
+ 370:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** __STATIC_INLINE uint32_t LL_GPIO_GetPinOutputType(GPIO_TypeDef *GPIOx, uint32_t Pin)
+ 371:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** {
+ 372:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   return (uint32_t)(READ_BIT(GPIOx->OTYPER, Pin) / Pin);
+ 373:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** }
+ 374:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** 
+ 375:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** /**
+ 376:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @brief  Configure gpio speed for a dedicated pin on dedicated port.
+ 377:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @note   I/O speed can be Low, Medium, Fast or High speed.
+ 378:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @note   Warning: only one pin can be passed as parameter.
+ 379:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @note   Refer to datasheet for frequency specifications and the power
+ 380:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         supply and load conditions for each speed.
+ 381:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @rmtoll OSPEEDR      OSPEEDy       LL_GPIO_SetPinSpeed
+ 382:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @param  GPIOx GPIO Port
+ 383:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @param  Pin This parameter can be one of the following values:
+ 384:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_0
+ 385:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_1
+ 386:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_2
+ 387:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_3
+ 388:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_4
+ 389:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_5
+ 390:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_6
+ 391:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_7
+ 392:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_8
+ 393:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_9
+ 394:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_10
+ 395:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_11
+ 396:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_12
+ 397:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_13
+ 398:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_14
+ 399:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_15
+ 400:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @param  Speed This parameter can be one of the following values:
+ 401:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_SPEED_FREQ_LOW
+ 402:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_SPEED_FREQ_MEDIUM
+ 403:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_SPEED_FREQ_HIGH
+ARM GAS  C:\Users\bvv64\AppData\Local\Temp\cceCw12b.s 			page 9
+
+
+ 404:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @retval None
+ 405:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   */
+ 406:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** __STATIC_INLINE void LL_GPIO_SetPinSpeed(GPIO_TypeDef *GPIOx, uint32_t Pin, uint32_t  Speed)
+ 407:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** {
+ 408:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   MODIFY_REG(GPIOx->OSPEEDR, ((Pin * Pin) * GPIO_OSPEEDR_OSPEEDR0), ((Pin * Pin) * Speed));
+ 409:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** }
+ 410:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** 
+ 411:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** /**
+ 412:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @brief  Return gpio speed for a dedicated pin on dedicated port.
+ 413:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @note   I/O speed can be Low, Medium, Fast or High speed.
+ 414:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @note   Warning: only one pin can be passed as parameter.
+ 415:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @note   Refer to datasheet for frequency specifications and the power
+ 416:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         supply and load conditions for each speed.
+ 417:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @rmtoll OSPEEDR      OSPEEDy       LL_GPIO_GetPinSpeed
+ 418:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @param  GPIOx GPIO Port
+ 419:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @param  Pin This parameter can be one of the following values:
+ 420:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_0
+ 421:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_1
+ 422:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_2
+ 423:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_3
+ 424:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_4
+ 425:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_5
+ 426:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_6
+ 427:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_7
+ 428:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_8
+ 429:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_9
+ 430:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_10
+ 431:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_11
+ 432:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_12
+ 433:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_13
+ 434:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_14
+ 435:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_15
+ 436:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @retval Returned value can be one of the following values:
+ 437:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_SPEED_FREQ_LOW
+ 438:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_SPEED_FREQ_MEDIUM
+ 439:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_SPEED_FREQ_HIGH
+ 440:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   */
+ 441:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** __STATIC_INLINE uint32_t LL_GPIO_GetPinSpeed(GPIO_TypeDef *GPIOx, uint32_t Pin)
+ 442:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** {
+ 443:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   return (uint32_t)(READ_BIT(GPIOx->OSPEEDR, ((Pin * Pin) * GPIO_OSPEEDR_OSPEEDR0)) / (Pin * Pin));
+ 444:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** }
+ 445:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** 
+ 446:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** /**
+ 447:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @brief  Configure gpio pull-up or pull-down for a dedicated pin on a dedicated port.
+ 448:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @note   Warning: only one pin can be passed as parameter.
+ 449:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @rmtoll PUPDR        PUPDy         LL_GPIO_SetPinPull
+ 450:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @param  GPIOx GPIO Port
+ 451:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @param  Pin This parameter can be one of the following values:
+ 452:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_0
+ 453:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_1
+ 454:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_2
+ 455:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_3
+ 456:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_4
+ 457:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_5
+ 458:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_6
+ 459:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_7
+ 460:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_8
+ARM GAS  C:\Users\bvv64\AppData\Local\Temp\cceCw12b.s 			page 10
+
+
+ 461:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_9
+ 462:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_10
+ 463:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_11
+ 464:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_12
+ 465:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_13
+ 466:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_14
+ 467:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PIN_15
+ 468:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @param  Pull This parameter can be one of the following values:
+ 469:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PULL_NO
+ 470:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PULL_UP
+ 471:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   *         @arg @ref LL_GPIO_PULL_DOWN
+ 472:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   * @retval None
+ 473:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   */
+ 474:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** __STATIC_INLINE void LL_GPIO_SetPinPull(GPIO_TypeDef *GPIOx, uint32_t Pin, uint32_t Pull)
+  41              		.loc 2 474 22 view .LVU2
+  42              	.LBB11:
+ 475:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** {
+ 476:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h ****   MODIFY_REG(GPIOx->PUPDR, ((Pin * Pin) * GPIO_PUPDR_PUPDR0), ((Pin * Pin) * Pull));
+  43              		.loc 2 476 3 view .LVU3
+  44 0002 9023     		movs	r3, #144
+  45 0004 DB05     		lsls	r3, r3, #23
+  46 0006 DA68     		ldr	r2, [r3, #12]
+  47 0008 3020     		movs	r0, #48
+  48 000a 8243     		bics	r2, r0
+  49 000c 1021     		movs	r1, #16
+  50 000e 0A43     		orrs	r2, r1
+  51 0010 DA60     		str	r2, [r3, #12]
+  52              	.LVL1:
+  53              		.loc 2 476 3 is_stmt 0 view .LVU4
+  54              	.LBE11:
+  55              	.LBE10:
+  15:Core/Src/buttons.c ****   LL_GPIO_SetPinPull(GPIOA, LL_GPIO_PIN_3, LL_GPIO_PULL_UP);
+  56              		.loc 1 15 3 is_stmt 1 view .LVU5
+  57              	.LBB12:
+  58              	.LBI12:
+ 474:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** {
+  59              		.loc 2 474 22 view .LVU6
+  60              	.LBB13:
+  61              		.loc 2 476 3 view .LVU7
+  62 0012 DA68     		ldr	r2, [r3, #12]
+  63 0014 B031     		adds	r1, r1, #176
+  64 0016 8A43     		bics	r2, r1
+  65 0018 4024     		movs	r4, #64
+  66 001a 2243     		orrs	r2, r4
+  67 001c DA60     		str	r2, [r3, #12]
+  68              	.LVL2:
+  69              		.loc 2 476 3 is_stmt 0 view .LVU8
+  70              	.LBE13:
+  71              	.LBE12:
+  16:Core/Src/buttons.c **** 
+  17:Core/Src/buttons.c ****   LL_GPIO_SetPinMode(GPIOA, LL_GPIO_PIN_2, LL_GPIO_MODE_INPUT);
+  72              		.loc 1 17 3 is_stmt 1 view .LVU9
+  73              	.LBB14:
+  74              	.LBI14:
+ 268:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** {
+  75              		.loc 2 268 22 view .LVU10
+  76              	.LBB15:
+ARM GAS  C:\Users\bvv64\AppData\Local\Temp\cceCw12b.s 			page 11
+
+
+ 270:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** }
+  77              		.loc 2 270 3 view .LVU11
+  78 001e 1A68     		ldr	r2, [r3]
+  79 0020 8243     		bics	r2, r0
+  80 0022 1A60     		str	r2, [r3]
+  81              	.LVL3:
+ 270:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** }
+  82              		.loc 2 270 3 is_stmt 0 view .LVU12
+  83              	.LBE15:
+  84              	.LBE14:
+  18:Core/Src/buttons.c ****   LL_GPIO_SetPinMode(GPIOA, LL_GPIO_PIN_3, LL_GPIO_MODE_INPUT);
+  85              		.loc 1 18 3 is_stmt 1 view .LVU13
+  86              	.LBB16:
+  87              	.LBI16:
+ 268:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** {
+  88              		.loc 2 268 22 view .LVU14
+  89              	.LBB17:
+ 270:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** }
+  90              		.loc 2 270 3 view .LVU15
+  91 0024 1A68     		ldr	r2, [r3]
+  92 0026 8A43     		bics	r2, r1
+  93 0028 1A60     		str	r2, [r3]
+  94              	.LVL4:
+ 270:Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_gpio.h **** }
+  95              		.loc 2 270 3 is_stmt 0 view .LVU16
+  96              	.LBE17:
+  97              	.LBE16:
+  19:Core/Src/buttons.c ****   
+  20:Core/Src/buttons.c ****     buttonSelect = NO_PRESSED;
+  98              		.loc 1 20 5 is_stmt 1 view .LVU17
+  99              		.loc 1 20 18 is_stmt 0 view .LVU18
+ 100 002a 0023     		movs	r3, #0
+ 101 002c 024A     		ldr	r2, .L2
+ 102 002e 1370     		strb	r3, [r2]
+  21:Core/Src/buttons.c ****     buttonSet = NO_PRESSED;
+ 103              		.loc 1 21 5 is_stmt 1 view .LVU19
+ 104              		.loc 1 21 15 is_stmt 0 view .LVU20
+ 105 0030 024A     		ldr	r2, .L2+4
+ 106 0032 1370     		strb	r3, [r2]
+  22:Core/Src/buttons.c **** }
+ 107              		.loc 1 22 1 view .LVU21
+ 108              		@ sp needed
+ 109 0034 10BD     		pop	{r4, pc}
+ 110              	.L3:
+ 111 0036 C046     		.align	2
+ 112              	.L2:
+ 113 0038 00000000 		.word	.LANCHOR0
+ 114 003c 00000000 		.word	.LANCHOR1
+ 115              		.cfi_endproc
+ 116              	.LFE334:
+ 118              		.section	.text.incCount,"ax",%progbits
+ 119              		.align	1
+ 120              		.global	incCount
+ 121              		.syntax unified
+ 122              		.code	16
+ 123              		.thumb_func
+ 125              	incCount:
+ARM GAS  C:\Users\bvv64\AppData\Local\Temp\cceCw12b.s 			page 12
+
+
+ 126              	.LFB335:
+  23:Core/Src/buttons.c **** 
+  24:Core/Src/buttons.c **** void incCount(void){
+ 127              		.loc 1 24 20 is_stmt 1 view -0
+ 128              		.cfi_startproc
+ 129              		@ args = 0, pretend = 0, frame = 0
+ 130              		@ frame_needed = 0, uses_anonymous_args = 0
+ 131              		@ link register save eliminated.
+  25:Core/Src/buttons.c ****     countDeBouce++;
+ 132              		.loc 1 25 5 view .LVU23
+ 133              		.loc 1 25 17 is_stmt 0 view .LVU24
+ 134 0000 024A     		ldr	r2, .L5
+ 135 0002 1388     		ldrh	r3, [r2]
+ 136 0004 0133     		adds	r3, r3, #1
+ 137 0006 1380     		strh	r3, [r2]
+  26:Core/Src/buttons.c **** }
+ 138              		.loc 1 26 1 view .LVU25
+ 139              		@ sp needed
+ 140 0008 7047     		bx	lr
+ 141              	.L6:
+ 142 000a C046     		.align	2
+ 143              	.L5:
+ 144 000c 00000000 		.word	.LANCHOR2
+ 145              		.cfi_endproc
+ 146              	.LFE335:
+ 148              		.section	.text.getStateButSet,"ax",%progbits
+ 149              		.align	1
+ 150              		.global	getStateButSet
+ 151              		.syntax unified
+ 152              		.code	16
+ 153              		.thumb_func
+ 155              	getStateButSet:
+ 156              	.LFB337:
+  27:Core/Src/buttons.c **** 
+  28:Core/Src/buttons.c **** 
+  29:Core/Src/buttons.c **** void scanButtons(void){
+  30:Core/Src/buttons.c ****     //если нажатия кнопок еще не обработаны выходим из с�
+  31:Core/Src/buttons.c ****     if (getStateButSelect() || getStateButSet()) return;
+  32:Core/Src/buttons.c ****     
+  33:Core/Src/buttons.c ****     t_key currentKey;
+  34:Core/Src/buttons.c **** 
+  35:Core/Src/buttons.c ****     if (!(GPIOA->IDR & GPIO_IDR_2)) currentKey = BUTTON_SELECT;
+  36:Core/Src/buttons.c ****     else if (!(GPIOA->IDR & GPIO_IDR_3)) currentKey = BUTTON_SET;
+  37:Core/Src/buttons.c ****     else currentKey = NO_PRESENT;
+  38:Core/Src/buttons.c **** 
+  39:Core/Src/buttons.c ****     if (currentKey)
+  40:Core/Src/buttons.c ****     {
+  41:Core/Src/buttons.c ****         if (currentKey == lastKey)
+  42:Core/Src/buttons.c ****         {
+  43:Core/Src/buttons.c ****             if (countDeBouce >= MAX_COUNT)
+  44:Core/Src/buttons.c ****             {
+  45:Core/Src/buttons.c ****                 setStateButtons(currentKey);
+  46:Core/Src/buttons.c ****                 lastKey = NO_PRESENT;
+  47:Core/Src/buttons.c ****                 countDeBouce = 0;
+  48:Core/Src/buttons.c ****             }
+  49:Core/Src/buttons.c ****             
+  50:Core/Src/buttons.c ****         }
+ARM GAS  C:\Users\bvv64\AppData\Local\Temp\cceCw12b.s 			page 13
+
+
+  51:Core/Src/buttons.c ****         else{
+  52:Core/Src/buttons.c ****             lastKey = currentKey;
+  53:Core/Src/buttons.c ****             countDeBouce = 0;
+  54:Core/Src/buttons.c ****         }
+  55:Core/Src/buttons.c ****         
+  56:Core/Src/buttons.c ****     }
+  57:Core/Src/buttons.c ****     else
+  58:Core/Src/buttons.c ****     {
+  59:Core/Src/buttons.c ****         countDeBouce = 0;
+  60:Core/Src/buttons.c ****     }
+  61:Core/Src/buttons.c **** }
+  62:Core/Src/buttons.c **** 
+  63:Core/Src/buttons.c **** t_buttonState getStateButSet(void){
+ 157              		.loc 1 63 35 is_stmt 1 view -0
+ 158              		.cfi_startproc
+ 159              		@ args = 0, pretend = 0, frame = 0
+ 160              		@ frame_needed = 0, uses_anonymous_args = 0
+ 161              		@ link register save eliminated.
+  64:Core/Src/buttons.c ****     return buttonSet;
+ 162              		.loc 1 64 5 view .LVU27
+ 163              		.loc 1 64 12 is_stmt 0 view .LVU28
+ 164 0000 014B     		ldr	r3, .L8
+ 165 0002 1878     		ldrb	r0, [r3]
+  65:Core/Src/buttons.c **** }
+ 166              		.loc 1 65 1 view .LVU29
+ 167              		@ sp needed
+ 168 0004 7047     		bx	lr
+ 169              	.L9:
+ 170 0006 C046     		.align	2
+ 171              	.L8:
+ 172 0008 00000000 		.word	.LANCHOR1
+ 173              		.cfi_endproc
+ 174              	.LFE337:
+ 176              		.section	.text.getStateButSelect,"ax",%progbits
+ 177              		.align	1
+ 178              		.global	getStateButSelect
+ 179              		.syntax unified
+ 180              		.code	16
+ 181              		.thumb_func
+ 183              	getStateButSelect:
+ 184              	.LFB338:
+  66:Core/Src/buttons.c **** 
+  67:Core/Src/buttons.c **** t_buttonState getStateButSelect(void){
+ 185              		.loc 1 67 38 is_stmt 1 view -0
+ 186              		.cfi_startproc
+ 187              		@ args = 0, pretend = 0, frame = 0
+ 188              		@ frame_needed = 0, uses_anonymous_args = 0
+ 189              		@ link register save eliminated.
+  68:Core/Src/buttons.c ****     return buttonSelect;
+ 190              		.loc 1 68 5 view .LVU31
+ 191              		.loc 1 68 12 is_stmt 0 view .LVU32
+ 192 0000 014B     		ldr	r3, .L11
+ 193 0002 1878     		ldrb	r0, [r3]
+  69:Core/Src/buttons.c **** }
+ 194              		.loc 1 69 1 view .LVU33
+ 195              		@ sp needed
+ 196 0004 7047     		bx	lr
+ARM GAS  C:\Users\bvv64\AppData\Local\Temp\cceCw12b.s 			page 14
+
+
+ 197              	.L12:
+ 198 0006 C046     		.align	2
+ 199              	.L11:
+ 200 0008 00000000 		.word	.LANCHOR0
+ 201              		.cfi_endproc
+ 202              	.LFE338:
+ 204              		.section	.text.setStateButSet,"ax",%progbits
+ 205              		.align	1
+ 206              		.global	setStateButSet
+ 207              		.syntax unified
+ 208              		.code	16
+ 209              		.thumb_func
+ 211              	setStateButSet:
+ 212              	.LVL5:
+ 213              	.LFB339:
+  70:Core/Src/buttons.c **** 
+  71:Core/Src/buttons.c **** void setStateButSet(t_buttonState state){
+ 214              		.loc 1 71 41 is_stmt 1 view -0
+ 215              		.cfi_startproc
+ 216              		@ args = 0, pretend = 0, frame = 0
+ 217              		@ frame_needed = 0, uses_anonymous_args = 0
+ 218              		@ link register save eliminated.
+  72:Core/Src/buttons.c ****     buttonSet = state;
+ 219              		.loc 1 72 5 view .LVU35
+ 220              		.loc 1 72 15 is_stmt 0 view .LVU36
+ 221 0000 014B     		ldr	r3, .L14
+ 222 0002 1870     		strb	r0, [r3]
+  73:Core/Src/buttons.c **** }
+ 223              		.loc 1 73 1 view .LVU37
+ 224              		@ sp needed
+ 225 0004 7047     		bx	lr
+ 226              	.L15:
+ 227 0006 C046     		.align	2
+ 228              	.L14:
+ 229 0008 00000000 		.word	.LANCHOR1
+ 230              		.cfi_endproc
+ 231              	.LFE339:
+ 233              		.section	.text.setStateButSelect,"ax",%progbits
+ 234              		.align	1
+ 235              		.global	setStateButSelect
+ 236              		.syntax unified
+ 237              		.code	16
+ 238              		.thumb_func
+ 240              	setStateButSelect:
+ 241              	.LVL6:
+ 242              	.LFB340:
+  74:Core/Src/buttons.c **** 
+  75:Core/Src/buttons.c **** void setStateButSelect(t_buttonState state){
+ 243              		.loc 1 75 44 is_stmt 1 view -0
+ 244              		.cfi_startproc
+ 245              		@ args = 0, pretend = 0, frame = 0
+ 246              		@ frame_needed = 0, uses_anonymous_args = 0
+ 247              		@ link register save eliminated.
+  76:Core/Src/buttons.c ****     buttonSelect = state;
+ 248              		.loc 1 76 5 view .LVU39
+ 249              		.loc 1 76 18 is_stmt 0 view .LVU40
+ 250 0000 014B     		ldr	r3, .L17
+ARM GAS  C:\Users\bvv64\AppData\Local\Temp\cceCw12b.s 			page 15
+
+
+ 251 0002 1870     		strb	r0, [r3]
+  77:Core/Src/buttons.c **** }
+ 252              		.loc 1 77 1 view .LVU41
+ 253              		@ sp needed
+ 254 0004 7047     		bx	lr
+ 255              	.L18:
+ 256 0006 C046     		.align	2
+ 257              	.L17:
+ 258 0008 00000000 		.word	.LANCHOR0
+ 259              		.cfi_endproc
+ 260              	.LFE340:
+ 262              		.section	.text.setStateButtons,"ax",%progbits
+ 263              		.align	1
+ 264              		.global	setStateButtons
+ 265              		.syntax unified
+ 266              		.code	16
+ 267              		.thumb_func
+ 269              	setStateButtons:
+ 270              	.LVL7:
+ 271              	.LFB341:
+  78:Core/Src/buttons.c **** 
+  79:Core/Src/buttons.c **** void setStateButtons(t_key key){
+ 272              		.loc 1 79 32 is_stmt 1 view -0
+ 273              		.cfi_startproc
+ 274              		@ args = 0, pretend = 0, frame = 0
+ 275              		@ frame_needed = 0, uses_anonymous_args = 0
+ 276              		@ link register save eliminated.
+  80:Core/Src/buttons.c ****     if (key == BUTTON_SELECT)
+ 277              		.loc 1 80 5 view .LVU43
+ 278              		.loc 1 80 8 is_stmt 0 view .LVU44
+ 279 0000 0128     		cmp	r0, #1
+ 280 0002 02D0     		beq	.L22
+ 281              	.L20:
+  81:Core/Src/buttons.c ****     {
+  82:Core/Src/buttons.c ****         buttonSelect = PRESSED;
+  83:Core/Src/buttons.c ****     }
+  84:Core/Src/buttons.c **** 
+  85:Core/Src/buttons.c ****     if (key == BUTTON_SET)
+ 282              		.loc 1 85 5 is_stmt 1 view .LVU45
+ 283              		.loc 1 85 8 is_stmt 0 view .LVU46
+ 284 0004 0228     		cmp	r0, #2
+ 285 0006 04D0     		beq	.L23
+ 286              	.L19:
+  86:Core/Src/buttons.c ****     {
+  87:Core/Src/buttons.c ****         buttonSet = PRESSED;
+  88:Core/Src/buttons.c ****     }
+  89:Core/Src/buttons.c ****     
+  90:Core/Src/buttons.c **** }...
+ 287              		.loc 1 90 1 view .LVU47
+ 288              		@ sp needed
+ 289 0008 7047     		bx	lr
+ 290              	.L22:
+  82:Core/Src/buttons.c ****         buttonSelect = PRESSED;
+ 291              		.loc 1 82 9 is_stmt 1 view .LVU48
+  82:Core/Src/buttons.c ****         buttonSelect = PRESSED;
+ 292              		.loc 1 82 22 is_stmt 0 view .LVU49
+ 293 000a 044B     		ldr	r3, .L24
+ARM GAS  C:\Users\bvv64\AppData\Local\Temp\cceCw12b.s 			page 16
+
+
+ 294 000c 0122     		movs	r2, #1
+ 295 000e 1A70     		strb	r2, [r3]
+ 296 0010 F8E7     		b	.L20
+ 297              	.L23:
+  87:Core/Src/buttons.c ****         buttonSet = PRESSED;
+ 298              		.loc 1 87 9 is_stmt 1 view .LVU50
+  87:Core/Src/buttons.c ****         buttonSet = PRESSED;
+ 299              		.loc 1 87 19 is_stmt 0 view .LVU51
+ 300 0012 034B     		ldr	r3, .L24+4
+ 301 0014 0122     		movs	r2, #1
+ 302 0016 1A70     		strb	r2, [r3]
+ 303              		.loc 1 90 1 view .LVU52
+ 304 0018 F6E7     		b	.L19
+ 305              	.L25:
+ 306 001a C046     		.align	2
+ 307              	.L24:
+ 308 001c 00000000 		.word	.LANCHOR0
+ 309 0020 00000000 		.word	.LANCHOR1
+ 310              		.cfi_endproc
+ 311              	.LFE341:
+ 313              		.section	.text.scanButtons,"ax",%progbits
+ 314              		.align	1
+ 315              		.global	scanButtons
+ 316              		.syntax unified
+ 317              		.code	16
+ 318              		.thumb_func
+ 320              	scanButtons:
+ 321              	.LFB336:
+  29:Core/Src/buttons.c **** void scanButtons(void){
+ 322              		.loc 1 29 23 is_stmt 1 view -0
+ 323              		.cfi_startproc
+ 324              		@ args = 0, pretend = 0, frame = 0
+ 325              		@ frame_needed = 0, uses_anonymous_args = 0
+ 326 0000 10B5     		push	{r4, lr}
+ 327              	.LCFI1:
+ 328              		.cfi_def_cfa_offset 8
+ 329              		.cfi_offset 4, -8
+ 330              		.cfi_offset 14, -4
+  31:Core/Src/buttons.c ****     if (getStateButSelect() || getStateButSet()) return;
+ 331              		.loc 1 31 5 view .LVU54
+  31:Core/Src/buttons.c ****     if (getStateButSelect() || getStateButSet()) return;
+ 332              		.loc 1 31 9 is_stmt 0 view .LVU55
+ 333 0002 FFF7FEFF 		bl	getStateButSelect
+ 334              	.LVL8:
+  31:Core/Src/buttons.c ****     if (getStateButSelect() || getStateButSet()) return;
+ 335              		.loc 1 31 8 view .LVU56
+ 336 0006 0028     		cmp	r0, #0
+ 337 0008 1BD1     		bne	.L26
+  31:Core/Src/buttons.c ****     if (getStateButSelect() || getStateButSet()) return;
+ 338              		.loc 1 31 32 discriminator 2 view .LVU57
+ 339 000a FFF7FEFF 		bl	getStateButSet
+ 340              	.LVL9:
+  31:Core/Src/buttons.c ****     if (getStateButSelect() || getStateButSet()) return;
+ 341              		.loc 1 31 29 discriminator 2 view .LVU58
+ 342 000e 0028     		cmp	r0, #0
+ 343 0010 17D1     		bne	.L26
+  33:Core/Src/buttons.c ****     t_key currentKey;
+ARM GAS  C:\Users\bvv64\AppData\Local\Temp\cceCw12b.s 			page 17
+
+
+ 344              		.loc 1 33 5 is_stmt 1 view .LVU59
+  35:Core/Src/buttons.c ****     if (!(GPIOA->IDR & GPIO_IDR_2)) currentKey = BUTTON_SELECT;
+ 345              		.loc 1 35 5 view .LVU60
+  35:Core/Src/buttons.c ****     if (!(GPIOA->IDR & GPIO_IDR_2)) currentKey = BUTTON_SELECT;
+ 346              		.loc 1 35 16 is_stmt 0 view .LVU61
+ 347 0012 9023     		movs	r3, #144
+ 348 0014 DB05     		lsls	r3, r3, #23
+ 349 0016 1B69     		ldr	r3, [r3, #16]
+  35:Core/Src/buttons.c ****     if (!(GPIOA->IDR & GPIO_IDR_2)) currentKey = BUTTON_SELECT;
+ 350              		.loc 1 35 8 view .LVU62
+ 351 0018 5B07     		lsls	r3, r3, #29
+ 352 001a 08D5     		bpl	.L30
+  36:Core/Src/buttons.c ****     else if (!(GPIOA->IDR & GPIO_IDR_3)) currentKey = BUTTON_SET;
+ 353              		.loc 1 36 10 is_stmt 1 view .LVU63
+  36:Core/Src/buttons.c ****     else if (!(GPIOA->IDR & GPIO_IDR_3)) currentKey = BUTTON_SET;
+ 354              		.loc 1 36 21 is_stmt 0 view .LVU64
+ 355 001c 9023     		movs	r3, #144
+ 356 001e DB05     		lsls	r3, r3, #23
+ 357 0020 1B69     		ldr	r3, [r3, #16]
+  36:Core/Src/buttons.c ****     else if (!(GPIOA->IDR & GPIO_IDR_3)) currentKey = BUTTON_SET;
+ 358              		.loc 1 36 13 view .LVU65
+ 359 0022 1B07     		lsls	r3, r3, #28
+ 360 0024 0ED5     		bpl	.L31
+  37:Core/Src/buttons.c ****     else currentKey = NO_PRESENT;
+ 361              		.loc 1 37 10 is_stmt 1 view .LVU66
+ 362              	.LVL10:
+  39:Core/Src/buttons.c ****     if (currentKey)
+ 363              		.loc 1 39 5 view .LVU67
+  59:Core/Src/buttons.c ****         countDeBouce = 0;
+ 364              		.loc 1 59 9 view .LVU68
+  59:Core/Src/buttons.c ****         countDeBouce = 0;
+ 365              		.loc 1 59 22 is_stmt 0 view .LVU69
+ 366 0026 0E4B     		ldr	r3, .L33
+ 367 0028 0022     		movs	r2, #0
+ 368 002a 1A80     		strh	r2, [r3]
+ 369 002c 09E0     		b	.L26
+ 370              	.LVL11:
+ 371              	.L30:
+  35:Core/Src/buttons.c ****     if (!(GPIOA->IDR & GPIO_IDR_2)) currentKey = BUTTON_SELECT;
+ 372              		.loc 1 35 48 view .LVU70
+ 373 002e 0120     		movs	r0, #1
+ 374              	.L28:
+  41:Core/Src/buttons.c ****         if (currentKey == lastKey)
+ 375              		.loc 1 41 9 is_stmt 1 view .LVU71
+  41:Core/Src/buttons.c ****         if (currentKey == lastKey)
+ 376              		.loc 1 41 24 is_stmt 0 view .LVU72
+ 377 0030 0C4B     		ldr	r3, .L33+4
+ 378 0032 1B78     		ldrb	r3, [r3]
+  41:Core/Src/buttons.c ****         if (currentKey == lastKey)
+ 379              		.loc 1 41 12 view .LVU73
+ 380 0034 8342     		cmp	r3, r0
+ 381 0036 07D0     		beq	.L32
+  52:Core/Src/buttons.c ****             lastKey = currentKey;
+ 382              		.loc 1 52 13 is_stmt 1 view .LVU74
+  52:Core/Src/buttons.c ****             lastKey = currentKey;
+ 383              		.loc 1 52 21 is_stmt 0 view .LVU75
+ 384 0038 0A4B     		ldr	r3, .L33+4
+ARM GAS  C:\Users\bvv64\AppData\Local\Temp\cceCw12b.s 			page 18
+
+
+ 385 003a 1870     		strb	r0, [r3]
+  53:Core/Src/buttons.c ****             countDeBouce = 0;
+ 386              		.loc 1 53 13 is_stmt 1 view .LVU76
+  53:Core/Src/buttons.c ****             countDeBouce = 0;
+ 387              		.loc 1 53 26 is_stmt 0 view .LVU77
+ 388 003c 084B     		ldr	r3, .L33
+ 389 003e 0022     		movs	r2, #0
+ 390 0040 1A80     		strh	r2, [r3]
+ 391              	.L26:
+  61:Core/Src/buttons.c **** }
+ 392              		.loc 1 61 1 view .LVU78
+ 393              		@ sp needed
+ 394 0042 10BD     		pop	{r4, pc}
+ 395              	.L31:
+  36:Core/Src/buttons.c ****     else if (!(GPIOA->IDR & GPIO_IDR_3)) currentKey = BUTTON_SET;
+ 396              		.loc 1 36 53 view .LVU79
+ 397 0044 0220     		movs	r0, #2
+ 398 0046 F3E7     		b	.L28
+ 399              	.L32:
+  43:Core/Src/buttons.c ****             if (countDeBouce >= MAX_COUNT)
+ 400              		.loc 1 43 13 is_stmt 1 view .LVU80
+  43:Core/Src/buttons.c ****             if (countDeBouce >= MAX_COUNT)
+ 401              		.loc 1 43 30 is_stmt 0 view .LVU81
+ 402 0048 054B     		ldr	r3, .L33
+ 403 004a 1B88     		ldrh	r3, [r3]
+  43:Core/Src/buttons.c ****             if (countDeBouce >= MAX_COUNT)
+ 404              		.loc 1 43 16 view .LVU82
+ 405 004c 012B     		cmp	r3, #1
+ 406 004e F8D9     		bls	.L26
+  45:Core/Src/buttons.c ****                 setStateButtons(currentKey);
+ 407              		.loc 1 45 17 is_stmt 1 view .LVU83
+ 408 0050 FFF7FEFF 		bl	setStateButtons
+ 409              	.LVL12:
+  46:Core/Src/buttons.c ****                 lastKey = NO_PRESENT;
+ 410              		.loc 1 46 17 view .LVU84
+  46:Core/Src/buttons.c ****                 lastKey = NO_PRESENT;
+ 411              		.loc 1 46 25 is_stmt 0 view .LVU85
+ 412 0054 0023     		movs	r3, #0
+ 413 0056 034A     		ldr	r2, .L33+4
+ 414 0058 1370     		strb	r3, [r2]
+  47:Core/Src/buttons.c ****                 countDeBouce = 0;
+ 415              		.loc 1 47 17 is_stmt 1 view .LVU86
+  47:Core/Src/buttons.c ****                 countDeBouce = 0;
+ 416              		.loc 1 47 30 is_stmt 0 view .LVU87
+ 417 005a 014A     		ldr	r2, .L33
+ 418 005c 1380     		strh	r3, [r2]
+ 419 005e F0E7     		b	.L26
+ 420              	.L34:
+ 421              		.align	2
+ 422              	.L33:
+ 423 0060 00000000 		.word	.LANCHOR2
+ 424 0064 00000000 		.word	.LANCHOR3
+ 425              		.cfi_endproc
+ 426              	.LFE336:
+ 428              		.global	MAX_COUNT
+ 429              		.global	lastKey
+ 430              		.global	countDeBouce
+ARM GAS  C:\Users\bvv64\AppData\Local\Temp\cceCw12b.s 			page 19
+
+
+ 431              		.global	buttonSelect
+ 432              		.global	buttonSet
+ 433              		.section	.bss.buttonSelect,"aw",%nobits
+ 434              		.set	.LANCHOR0,. + 0
+ 437              	buttonSelect:
+ 438 0000 00       		.space	1
+ 439              		.section	.bss.buttonSet,"aw",%nobits
+ 440              		.set	.LANCHOR1,. + 0
+ 443              	buttonSet:
+ 444 0000 00       		.space	1
+ 445              		.section	.bss.countDeBouce,"aw",%nobits
+ 446              		.align	1
+ 447              		.set	.LANCHOR2,. + 0
+ 450              	countDeBouce:
+ 451 0000 0000     		.space	2
+ 452              		.section	.bss.lastKey,"aw",%nobits
+ 453              		.set	.LANCHOR3,. + 0
+ 456              	lastKey:
+ 457 0000 00       		.space	1
+ 458              		.section	.rodata.MAX_COUNT,"a"
+ 459              		.align	1
+ 462              	MAX_COUNT:
+ 463 0000 0200     		.short	2
+ 464              		.text
+ 465              	.Letext0:
+ 466              		.file 3 "c:\\gnu_mcu\\xpack-arm-none-eabi-gcc-10.3.1-2.3\\arm-none-eabi\\include\\machine\\_defaul
+ 467              		.file 4 "c:\\gnu_mcu\\xpack-arm-none-eabi-gcc-10.3.1-2.3\\arm-none-eabi\\include\\sys\\_stdint.h"
+ 468              		.file 5 "Drivers/CMSIS/Device/ST/STM32F0xx/Include/stm32f030x6.h"
+ 469              		.file 6 "Core/Inc/buttons.h"
+ 470              		.file 7 "Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_dma.h"
+ARM GAS  C:\Users\bvv64\AppData\Local\Temp\cceCw12b.s 			page 20
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 buttons.c
+C:\Users\bvv64\AppData\Local\Temp\cceCw12b.s:18     .text.init_BUTTONS:0000000000000000 $t
+C:\Users\bvv64\AppData\Local\Temp\cceCw12b.s:24     .text.init_BUTTONS:0000000000000000 init_BUTTONS
+C:\Users\bvv64\AppData\Local\Temp\cceCw12b.s:113    .text.init_BUTTONS:0000000000000038 $d
+C:\Users\bvv64\AppData\Local\Temp\cceCw12b.s:119    .text.incCount:0000000000000000 $t
+C:\Users\bvv64\AppData\Local\Temp\cceCw12b.s:125    .text.incCount:0000000000000000 incCount
+C:\Users\bvv64\AppData\Local\Temp\cceCw12b.s:144    .text.incCount:000000000000000c $d
+C:\Users\bvv64\AppData\Local\Temp\cceCw12b.s:149    .text.getStateButSet:0000000000000000 $t
+C:\Users\bvv64\AppData\Local\Temp\cceCw12b.s:155    .text.getStateButSet:0000000000000000 getStateButSet
+C:\Users\bvv64\AppData\Local\Temp\cceCw12b.s:172    .text.getStateButSet:0000000000000008 $d
+C:\Users\bvv64\AppData\Local\Temp\cceCw12b.s:177    .text.getStateButSelect:0000000000000000 $t
+C:\Users\bvv64\AppData\Local\Temp\cceCw12b.s:183    .text.getStateButSelect:0000000000000000 getStateButSelect
+C:\Users\bvv64\AppData\Local\Temp\cceCw12b.s:200    .text.getStateButSelect:0000000000000008 $d
+C:\Users\bvv64\AppData\Local\Temp\cceCw12b.s:205    .text.setStateButSet:0000000000000000 $t
+C:\Users\bvv64\AppData\Local\Temp\cceCw12b.s:211    .text.setStateButSet:0000000000000000 setStateButSet
+C:\Users\bvv64\AppData\Local\Temp\cceCw12b.s:229    .text.setStateButSet:0000000000000008 $d
+C:\Users\bvv64\AppData\Local\Temp\cceCw12b.s:234    .text.setStateButSelect:0000000000000000 $t
+C:\Users\bvv64\AppData\Local\Temp\cceCw12b.s:240    .text.setStateButSelect:0000000000000000 setStateButSelect
+C:\Users\bvv64\AppData\Local\Temp\cceCw12b.s:258    .text.setStateButSelect:0000000000000008 $d
+C:\Users\bvv64\AppData\Local\Temp\cceCw12b.s:263    .text.setStateButtons:0000000000000000 $t
+C:\Users\bvv64\AppData\Local\Temp\cceCw12b.s:269    .text.setStateButtons:0000000000000000 setStateButtons
+C:\Users\bvv64\AppData\Local\Temp\cceCw12b.s:308    .text.setStateButtons:000000000000001c $d
+C:\Users\bvv64\AppData\Local\Temp\cceCw12b.s:314    .text.scanButtons:0000000000000000 $t
+C:\Users\bvv64\AppData\Local\Temp\cceCw12b.s:320    .text.scanButtons:0000000000000000 scanButtons
+C:\Users\bvv64\AppData\Local\Temp\cceCw12b.s:423    .text.scanButtons:0000000000000060 $d
+C:\Users\bvv64\AppData\Local\Temp\cceCw12b.s:462    .rodata.MAX_COUNT:0000000000000000 MAX_COUNT
+C:\Users\bvv64\AppData\Local\Temp\cceCw12b.s:456    .bss.lastKey:0000000000000000 lastKey
+C:\Users\bvv64\AppData\Local\Temp\cceCw12b.s:450    .bss.countDeBouce:0000000000000000 countDeBouce
+C:\Users\bvv64\AppData\Local\Temp\cceCw12b.s:437    .bss.buttonSelect:0000000000000000 buttonSelect
+C:\Users\bvv64\AppData\Local\Temp\cceCw12b.s:443    .bss.buttonSet:0000000000000000 buttonSet
+C:\Users\bvv64\AppData\Local\Temp\cceCw12b.s:438    .bss.buttonSelect:0000000000000000 $d
+C:\Users\bvv64\AppData\Local\Temp\cceCw12b.s:444    .bss.buttonSet:0000000000000000 $d
+C:\Users\bvv64\AppData\Local\Temp\cceCw12b.s:446    .bss.countDeBouce:0000000000000000 $d
+C:\Users\bvv64\AppData\Local\Temp\cceCw12b.s:457    .bss.lastKey:0000000000000000 $d
+C:\Users\bvv64\AppData\Local\Temp\cceCw12b.s:459    .rodata.MAX_COUNT:0000000000000000 $d
+
+NO UNDEFINED SYMBOLS

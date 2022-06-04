@@ -1,0 +1,915 @@
+ARM GAS  C:\Users\bvv64\AppData\Local\Temp\ccY1Vm8T.s 			page 1
+
+
+   1              		.cpu cortex-m0
+   2              		.arch armv6s-m
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 0
+  12              		.eabi_attribute 18, 4
+  13              		.file	"ds3231.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.init_DS3231,"ax",%progbits
+  18              		.align	1
+  19              		.global	init_DS3231
+  20              		.syntax unified
+  21              		.code	16
+  22              		.thumb_func
+  24              	init_DS3231:
+  25              	.LFB334:
+  26              		.file 1 "Core/Src/ds3231.c"
+   1:Core/Src/ds3231.c **** /*
+   2:Core/Src/ds3231.c **** 
+   3:Core/Src/ds3231.c **** */
+   4:Core/Src/ds3231.c **** 
+   5:Core/Src/ds3231.c **** #include "ds3231.h"
+   6:Core/Src/ds3231.c **** 
+   7:Core/Src/ds3231.c **** t_ds3231 time;  //хранение минут и часов
+   8:Core/Src/ds3231.c **** 
+   9:Core/Src/ds3231.c **** void init_DS3231(void){
+  27              		.loc 1 9 23 view -0
+  28              		.cfi_startproc
+  29              		@ args = 0, pretend = 0, frame = 0
+  30              		@ frame_needed = 0, uses_anonymous_args = 0
+  31              		@ link register save eliminated.
+  10:Core/Src/ds3231.c ****     //****GPIO for I2C1***********************************************
+  11:Core/Src/ds3231.c ****     //PA9->SCL, PA10->SDA (pull-up не включаем потому, что есть внешни
+  12:Core/Src/ds3231.c ****     GPIOA->MODER |= (GPIO_MODER_MODER9_1 | GPIO_MODER_MODER10_1);                           //AF
+  32              		.loc 1 12 5 view .LVU1
+  33              		.loc 1 12 18 is_stmt 0 view .LVU2
+  34 0000 9023     		movs	r3, #144
+  35 0002 DB05     		lsls	r3, r3, #23
+  36 0004 1968     		ldr	r1, [r3]
+  37 0006 A022     		movs	r2, #160
+  38 0008 9203     		lsls	r2, r2, #14
+  39 000a 0A43     		orrs	r2, r1
+  40 000c 1A60     		str	r2, [r3]
+  13:Core/Src/ds3231.c ****     GPIOA->OTYPER |= (GPIO_OTYPER_OT_9 | GPIO_OTYPER_OT_10);                                //Open 
+  41              		.loc 1 13 5 is_stmt 1 view .LVU3
+  42              		.loc 1 13 19 is_stmt 0 view .LVU4
+  43 000e 5968     		ldr	r1, [r3, #4]
+  44 0010 C022     		movs	r2, #192
+  45 0012 D200     		lsls	r2, r2, #3
+ARM GAS  C:\Users\bvv64\AppData\Local\Temp\ccY1Vm8T.s 			page 2
+
+
+  46 0014 0A43     		orrs	r2, r1
+  47 0016 5A60     		str	r2, [r3, #4]
+  14:Core/Src/ds3231.c ****     GPIOA->OSPEEDR |= (GPIO_OSPEEDR_OSPEEDR9 | GPIO_OSPEEDR_OSPEEDR10);                     //high 
+  48              		.loc 1 14 5 is_stmt 1 view .LVU5
+  49              		.loc 1 14 20 is_stmt 0 view .LVU6
+  50 0018 9968     		ldr	r1, [r3, #8]
+  51 001a F022     		movs	r2, #240
+  52 001c 9203     		lsls	r2, r2, #14
+  53 001e 0A43     		orrs	r2, r1
+  54 0020 9A60     		str	r2, [r3, #8]
+  15:Core/Src/ds3231.c ****     GPIOA->AFR[1] |= ((0x04 << GPIO_AFRH_AFSEL9_Pos) | (0x04 << GPIO_AFRH_AFSEL10_Pos));    //AF4
+  55              		.loc 1 15 5 is_stmt 1 view .LVU7
+  56              		.loc 1 15 19 is_stmt 0 view .LVU8
+  57 0022 596A     		ldr	r1, [r3, #36]
+  58 0024 8822     		movs	r2, #136
+  59 0026 D200     		lsls	r2, r2, #3
+  60 0028 0A43     		orrs	r2, r1
+  61 002a 5A62     		str	r2, [r3, #36]
+  16:Core/Src/ds3231.c ****     //****************************************************************
+  17:Core/Src/ds3231.c **** 
+  18:Core/Src/ds3231.c ****     //*** Init I2C1***************************************************
+  19:Core/Src/ds3231.c ****     RCC->APB1ENR |= RCC_APB1ENR_I2C1EN;
+  62              		.loc 1 19 5 is_stmt 1 view .LVU9
+  63              		.loc 1 19 18 is_stmt 0 view .LVU10
+  64 002c 0B4A     		ldr	r2, .L2
+  65 002e D169     		ldr	r1, [r2, #28]
+  66 0030 8023     		movs	r3, #128
+  67 0032 9B03     		lsls	r3, r3, #14
+  68 0034 0B43     		orrs	r3, r1
+  69 0036 D361     		str	r3, [r2, #28]
+  20:Core/Src/ds3231.c ****     I2C1->CR1 &= ~I2C_CR1_PE;
+  70              		.loc 1 20 5 is_stmt 1 view .LVU11
+  71              		.loc 1 20 15 is_stmt 0 view .LVU12
+  72 0038 094B     		ldr	r3, .L2+4
+  73 003a 1968     		ldr	r1, [r3]
+  74 003c 0120     		movs	r0, #1
+  75 003e 8143     		bics	r1, r0
+  76 0040 1960     		str	r1, [r3]
+  21:Core/Src/ds3231.c ****     I2C1->TIMINGR = (uint32_t)0x2000090E;   //расчитано в CubeMX
+  77              		.loc 1 21 5 is_stmt 1 view .LVU13
+  78              		.loc 1 21 19 is_stmt 0 view .LVU14
+  79 0042 084A     		ldr	r2, .L2+8
+  80 0044 1A61     		str	r2, [r3, #16]
+  22:Core/Src/ds3231.c ****     I2C1->CR1 &= ~I2C_CR1_NOSTRETCH;
+  81              		.loc 1 22 5 is_stmt 1 view .LVU15
+  82              		.loc 1 22 15 is_stmt 0 view .LVU16
+  83 0046 1968     		ldr	r1, [r3]
+  84 0048 074A     		ldr	r2, .L2+12
+  85 004a 1140     		ands	r1, r2
+  86 004c 1960     		str	r1, [r3]
+  23:Core/Src/ds3231.c ****     I2C1->CR2 = (ADDRESS_DS3231 << 1);
+  87              		.loc 1 23 5 is_stmt 1 view .LVU17
+  88              		.loc 1 23 15 is_stmt 0 view .LVU18
+  89 004e D022     		movs	r2, #208
+  90 0050 5A60     		str	r2, [r3, #4]
+  24:Core/Src/ds3231.c **** 
+  25:Core/Src/ds3231.c ****     I2C1->CR1 |= I2C_CR1_PE;
+ARM GAS  C:\Users\bvv64\AppData\Local\Temp\ccY1Vm8T.s 			page 3
+
+
+  91              		.loc 1 25 5 is_stmt 1 view .LVU19
+  92              		.loc 1 25 15 is_stmt 0 view .LVU20
+  93 0052 1A68     		ldr	r2, [r3]
+  94 0054 0243     		orrs	r2, r0
+  95 0056 1A60     		str	r2, [r3]
+  26:Core/Src/ds3231.c ****     //****************************************************************
+  27:Core/Src/ds3231.c **** }
+  96              		.loc 1 27 1 view .LVU21
+  97              		@ sp needed
+  98 0058 7047     		bx	lr
+  99              	.L3:
+ 100 005a C046     		.align	2
+ 101              	.L2:
+ 102 005c 00100240 		.word	1073876992
+ 103 0060 00540040 		.word	1073763328
+ 104 0064 0E090020 		.word	536873230
+ 105 0068 FFFFFDFF 		.word	-131073
+ 106              		.cfi_endproc
+ 107              	.LFE334:
+ 109              		.section	.text.readReg_DS3231,"ax",%progbits
+ 110              		.align	1
+ 111              		.global	readReg_DS3231
+ 112              		.syntax unified
+ 113              		.code	16
+ 114              		.thumb_func
+ 116              	readReg_DS3231:
+ 117              	.LVL0:
+ 118              	.LFB335:
+  28:Core/Src/ds3231.c **** 
+  29:Core/Src/ds3231.c **** uint8_t readReg_DS3231(addr_register addr){
+ 119              		.loc 1 29 43 is_stmt 1 view -0
+ 120              		.cfi_startproc
+ 121              		@ args = 0, pretend = 0, frame = 0
+ 122              		@ frame_needed = 0, uses_anonymous_args = 0
+ 123              		@ link register save eliminated.
+  30:Core/Src/ds3231.c **** 
+  31:Core/Src/ds3231.c ****     I2C1->CR2 &= ~I2C_CR2_AUTOEND;
+ 124              		.loc 1 31 5 view .LVU23
+ 125              		.loc 1 31 15 is_stmt 0 view .LVU24
+ 126 0000 234B     		ldr	r3, .L9
+ 127 0002 5A68     		ldr	r2, [r3, #4]
+ 128 0004 2349     		ldr	r1, .L9+4
+ 129 0006 0A40     		ands	r2, r1
+ 130 0008 5A60     		str	r2, [r3, #4]
+  32:Core/Src/ds3231.c ****     I2C1->CR2 &= ~I2C_CR2_RD_WRN;       //режим записи
+ 131              		.loc 1 32 5 is_stmt 1 view .LVU25
+ 132              		.loc 1 32 15 is_stmt 0 view .LVU26
+ 133 000a 5A68     		ldr	r2, [r3, #4]
+ 134 000c 2249     		ldr	r1, .L9+8
+ 135 000e 0A40     		ands	r2, r1
+ 136 0010 5A60     		str	r2, [r3, #4]
+  33:Core/Src/ds3231.c ****     I2C1->CR2 &= ~I2C_CR2_NBYTES_Msk;
+ 137              		.loc 1 33 5 is_stmt 1 view .LVU27
+ 138              		.loc 1 33 15 is_stmt 0 view .LVU28
+ 139 0012 5A68     		ldr	r2, [r3, #4]
+ 140 0014 2149     		ldr	r1, .L9+12
+ 141 0016 0A40     		ands	r2, r1
+ARM GAS  C:\Users\bvv64\AppData\Local\Temp\ccY1Vm8T.s 			page 4
+
+
+ 142 0018 5A60     		str	r2, [r3, #4]
+  34:Core/Src/ds3231.c ****     I2C1->CR2 |= (uint32_t)(0x01)<<16;  //записываем один байт (адрес рег
+ 143              		.loc 1 34 5 is_stmt 1 view .LVU29
+ 144              		.loc 1 34 15 is_stmt 0 view .LVU30
+ 145 001a 5968     		ldr	r1, [r3, #4]
+ 146 001c 8022     		movs	r2, #128
+ 147 001e 5202     		lsls	r2, r2, #9
+ 148 0020 0A43     		orrs	r2, r1
+ 149 0022 5A60     		str	r2, [r3, #4]
+  35:Core/Src/ds3231.c ****     while(!(I2C1->ISR & I2C_ISR_TXE));  //ожидание освобождения регистр�
+ 150              		.loc 1 35 5 is_stmt 1 view .LVU31
+ 151              	.L5:
+ 152              		.loc 1 35 38 discriminator 1 view .LVU32
+ 153              		.loc 1 35 10 discriminator 1 view .LVU33
+ 154              		.loc 1 35 17 is_stmt 0 discriminator 1 view .LVU34
+ 155 0024 1A4B     		ldr	r3, .L9
+ 156 0026 9B69     		ldr	r3, [r3, #24]
+ 157              		.loc 1 35 10 discriminator 1 view .LVU35
+ 158 0028 DB07     		lsls	r3, r3, #31
+ 159 002a FBD5     		bpl	.L5
+  36:Core/Src/ds3231.c ****     
+  37:Core/Src/ds3231.c ****     I2C1->CR2 |= I2C_CR2_START;         //старт передачи
+ 160              		.loc 1 37 5 is_stmt 1 view .LVU36
+ 161              		.loc 1 37 15 is_stmt 0 view .LVU37
+ 162 002c 184A     		ldr	r2, .L9
+ 163 002e 5168     		ldr	r1, [r2, #4]
+ 164 0030 8023     		movs	r3, #128
+ 165 0032 9B01     		lsls	r3, r3, #6
+ 166 0034 0B43     		orrs	r3, r1
+ 167 0036 5360     		str	r3, [r2, #4]
+  38:Core/Src/ds3231.c ****     while(!(I2C1->ISR & I2C_ISR_TXIS));
+ 168              		.loc 1 38 5 is_stmt 1 view .LVU38
+ 169              	.L6:
+ 170              		.loc 1 38 39 discriminator 1 view .LVU39
+ 171              		.loc 1 38 10 discriminator 1 view .LVU40
+ 172              		.loc 1 38 17 is_stmt 0 discriminator 1 view .LVU41
+ 173 0038 154B     		ldr	r3, .L9
+ 174 003a 9B69     		ldr	r3, [r3, #24]
+ 175              		.loc 1 38 10 discriminator 1 view .LVU42
+ 176 003c 9B07     		lsls	r3, r3, #30
+ 177 003e FBD5     		bpl	.L6
+  39:Core/Src/ds3231.c ****     I2C1->TXDR = (uint32_t)addr;        //адрес регистра минут DS3231
+ 178              		.loc 1 39 5 is_stmt 1 view .LVU43
+ 179              		.loc 1 39 16 is_stmt 0 view .LVU44
+ 180 0040 134B     		ldr	r3, .L9
+ 181 0042 9862     		str	r0, [r3, #40]
+  40:Core/Src/ds3231.c ****     //проверка регистра ISR_NACKF
+  41:Core/Src/ds3231.c ****     while(!(I2C1->ISR & I2C_ISR_TC));   //ожидание завершения передачи
+ 182              		.loc 1 41 5 is_stmt 1 view .LVU45
+ 183              	.L7:
+ 184              		.loc 1 41 37 discriminator 1 view .LVU46
+ 185              		.loc 1 41 10 discriminator 1 view .LVU47
+ 186              		.loc 1 41 17 is_stmt 0 discriminator 1 view .LVU48
+ 187 0044 124B     		ldr	r3, .L9
+ 188 0046 9B69     		ldr	r3, [r3, #24]
+ 189              		.loc 1 41 10 discriminator 1 view .LVU49
+ 190 0048 5B06     		lsls	r3, r3, #25
+ARM GAS  C:\Users\bvv64\AppData\Local\Temp\ccY1Vm8T.s 			page 5
+
+
+ 191 004a FBD5     		bpl	.L7
+  42:Core/Src/ds3231.c **** 
+  43:Core/Src/ds3231.c ****     I2C1->CR2 |=I2C_CR2_AUTOEND;        //автозавершение включено
+ 192              		.loc 1 43 5 is_stmt 1 view .LVU50
+ 193              		.loc 1 43 15 is_stmt 0 view .LVU51
+ 194 004c 104B     		ldr	r3, .L9
+ 195 004e 5968     		ldr	r1, [r3, #4]
+ 196 0050 8022     		movs	r2, #128
+ 197 0052 9204     		lsls	r2, r2, #18
+ 198 0054 0A43     		orrs	r2, r1
+ 199 0056 5A60     		str	r2, [r3, #4]
+  44:Core/Src/ds3231.c ****     I2C1->CR2 |= I2C_CR2_RD_WRN;        //режим чтения
+ 200              		.loc 1 44 5 is_stmt 1 view .LVU52
+ 201              		.loc 1 44 15 is_stmt 0 view .LVU53
+ 202 0058 5968     		ldr	r1, [r3, #4]
+ 203 005a 8022     		movs	r2, #128
+ 204 005c D200     		lsls	r2, r2, #3
+ 205 005e 0A43     		orrs	r2, r1
+ 206 0060 5A60     		str	r2, [r3, #4]
+  45:Core/Src/ds3231.c **** 
+  46:Core/Src/ds3231.c ****     I2C1->CR2 &= ~I2C_CR2_NBYTES_Msk;
+ 207              		.loc 1 46 5 is_stmt 1 view .LVU54
+ 208              		.loc 1 46 15 is_stmt 0 view .LVU55
+ 209 0062 5A68     		ldr	r2, [r3, #4]
+ 210 0064 0D49     		ldr	r1, .L9+12
+ 211 0066 0A40     		ands	r2, r1
+ 212 0068 5A60     		str	r2, [r3, #4]
+  47:Core/Src/ds3231.c ****     I2C1->CR2 |= (uint32_t)(0x01)<<16;  //будем считывать 1 байт из регис�
+ 213              		.loc 1 47 5 is_stmt 1 view .LVU56
+ 214              		.loc 1 47 15 is_stmt 0 view .LVU57
+ 215 006a 5968     		ldr	r1, [r3, #4]
+ 216 006c 8022     		movs	r2, #128
+ 217 006e 5202     		lsls	r2, r2, #9
+ 218 0070 0A43     		orrs	r2, r1
+ 219 0072 5A60     		str	r2, [r3, #4]
+  48:Core/Src/ds3231.c ****     
+  49:Core/Src/ds3231.c ****     I2C1->CR2 |= I2C_CR2_START;         //старт передачи
+ 220              		.loc 1 49 5 is_stmt 1 view .LVU58
+ 221              		.loc 1 49 15 is_stmt 0 view .LVU59
+ 222 0074 5968     		ldr	r1, [r3, #4]
+ 223 0076 8022     		movs	r2, #128
+ 224 0078 9201     		lsls	r2, r2, #6
+ 225 007a 0A43     		orrs	r2, r1
+ 226 007c 5A60     		str	r2, [r3, #4]
+  50:Core/Src/ds3231.c ****     
+  51:Core/Src/ds3231.c ****     while(!(I2C1->ISR & I2C_ISR_RXNE));
+ 227              		.loc 1 51 5 is_stmt 1 view .LVU60
+ 228              	.L8:
+ 229              		.loc 1 51 39 discriminator 1 view .LVU61
+ 230              		.loc 1 51 10 discriminator 1 view .LVU62
+ 231              		.loc 1 51 17 is_stmt 0 discriminator 1 view .LVU63
+ 232 007e 044B     		ldr	r3, .L9
+ 233 0080 9B69     		ldr	r3, [r3, #24]
+ 234              		.loc 1 51 10 discriminator 1 view .LVU64
+ 235 0082 5B07     		lsls	r3, r3, #29
+ 236 0084 FBD5     		bpl	.L8
+  52:Core/Src/ds3231.c ****     return I2C1->RXDR;
+ARM GAS  C:\Users\bvv64\AppData\Local\Temp\ccY1Vm8T.s 			page 6
+
+
+ 237              		.loc 1 52 5 is_stmt 1 view .LVU65
+ 238              		.loc 1 52 16 is_stmt 0 view .LVU66
+ 239 0086 024B     		ldr	r3, .L9
+ 240 0088 586A     		ldr	r0, [r3, #36]
+ 241              	.LVL1:
+ 242              		.loc 1 52 16 view .LVU67
+ 243 008a C0B2     		uxtb	r0, r0
+  53:Core/Src/ds3231.c **** }
+ 244              		.loc 1 53 1 view .LVU68
+ 245              		@ sp needed
+ 246 008c 7047     		bx	lr
+ 247              	.L10:
+ 248 008e C046     		.align	2
+ 249              	.L9:
+ 250 0090 00540040 		.word	1073763328
+ 251 0094 FFFFFFFD 		.word	-33554433
+ 252 0098 FFFBFFFF 		.word	-1025
+ 253 009c FFFF00FF 		.word	-16711681
+ 254              		.cfi_endproc
+ 255              	.LFE335:
+ 257              		.section	.text.getMinutesHours,"ax",%progbits
+ 258              		.align	1
+ 259              		.global	getMinutesHours
+ 260              		.syntax unified
+ 261              		.code	16
+ 262              		.thumb_func
+ 264              	getMinutesHours:
+ 265              	.LFB336:
+  54:Core/Src/ds3231.c **** 
+  55:Core/Src/ds3231.c **** t_ds3231* getMinutesHours(void){
+ 266              		.loc 1 55 32 is_stmt 1 view -0
+ 267              		.cfi_startproc
+ 268              		@ args = 0, pretend = 0, frame = 0
+ 269              		@ frame_needed = 0, uses_anonymous_args = 0
+ 270 0000 30B5     		push	{r4, r5, lr}
+ 271              	.LCFI0:
+ 272              		.cfi_def_cfa_offset 12
+ 273              		.cfi_offset 4, -12
+ 274              		.cfi_offset 5, -8
+ 275              		.cfi_offset 14, -4
+  56:Core/Src/ds3231.c ****     uint8_t reg_minutes, reg_hours; //для хранения считанных данных из 
+ 276              		.loc 1 56 5 view .LVU70
+  57:Core/Src/ds3231.c **** 
+  58:Core/Src/ds3231.c ****     //ожидание освобождения шины
+  59:Core/Src/ds3231.c ****     //I2C1->CR1 |= I2C_CR1_PE;
+  60:Core/Src/ds3231.c ****     I2C1->CR2 &= ~I2C_CR2_AUTOEND;
+ 277              		.loc 1 60 5 view .LVU71
+ 278              		.loc 1 60 15 is_stmt 0 view .LVU72
+ 279 0002 304B     		ldr	r3, .L17
+ 280 0004 5A68     		ldr	r2, [r3, #4]
+ 281 0006 3049     		ldr	r1, .L17+4
+ 282 0008 0A40     		ands	r2, r1
+ 283 000a 5A60     		str	r2, [r3, #4]
+  61:Core/Src/ds3231.c ****     I2C1->CR2 &= ~I2C_CR2_RD_WRN;   //режим записи
+ 284              		.loc 1 61 5 is_stmt 1 view .LVU73
+ 285              		.loc 1 61 15 is_stmt 0 view .LVU74
+ 286 000c 5A68     		ldr	r2, [r3, #4]
+ARM GAS  C:\Users\bvv64\AppData\Local\Temp\ccY1Vm8T.s 			page 7
+
+
+ 287 000e 2F49     		ldr	r1, .L17+8
+ 288 0010 0A40     		ands	r2, r1
+ 289 0012 5A60     		str	r2, [r3, #4]
+  62:Core/Src/ds3231.c ****     I2C1->CR2 &= ~I2C_CR2_NBYTES_Msk;
+ 290              		.loc 1 62 5 is_stmt 1 view .LVU75
+ 291              		.loc 1 62 15 is_stmt 0 view .LVU76
+ 292 0014 5A68     		ldr	r2, [r3, #4]
+ 293 0016 2E49     		ldr	r1, .L17+12
+ 294 0018 0A40     		ands	r2, r1
+ 295 001a 5A60     		str	r2, [r3, #4]
+  63:Core/Src/ds3231.c ****     I2C1->CR2 |= (uint32_t)(0x01)<<16;  //записываем один байт (адрес рег
+ 296              		.loc 1 63 5 is_stmt 1 view .LVU77
+ 297              		.loc 1 63 15 is_stmt 0 view .LVU78
+ 298 001c 5968     		ldr	r1, [r3, #4]
+ 299 001e 8022     		movs	r2, #128
+ 300 0020 5202     		lsls	r2, r2, #9
+ 301 0022 0A43     		orrs	r2, r1
+ 302 0024 5A60     		str	r2, [r3, #4]
+  64:Core/Src/ds3231.c ****     while(!(I2C1->ISR & I2C_ISR_TXE));  //ожидание освобождения регистр�
+ 303              		.loc 1 64 5 is_stmt 1 view .LVU79
+ 304              	.L12:
+ 305              		.loc 1 64 38 discriminator 1 view .LVU80
+ 306              		.loc 1 64 10 discriminator 1 view .LVU81
+ 307              		.loc 1 64 17 is_stmt 0 discriminator 1 view .LVU82
+ 308 0026 274B     		ldr	r3, .L17
+ 309 0028 9B69     		ldr	r3, [r3, #24]
+ 310              		.loc 1 64 10 discriminator 1 view .LVU83
+ 311 002a DB07     		lsls	r3, r3, #31
+ 312 002c FBD5     		bpl	.L12
+  65:Core/Src/ds3231.c ****     
+  66:Core/Src/ds3231.c ****     I2C1->CR2 |= I2C_CR2_START;     //старт передачи
+ 313              		.loc 1 66 5 is_stmt 1 view .LVU84
+ 314              		.loc 1 66 15 is_stmt 0 view .LVU85
+ 315 002e 254A     		ldr	r2, .L17
+ 316 0030 5168     		ldr	r1, [r2, #4]
+ 317 0032 8023     		movs	r3, #128
+ 318 0034 9B01     		lsls	r3, r3, #6
+ 319 0036 0B43     		orrs	r3, r1
+ 320 0038 5360     		str	r3, [r2, #4]
+  67:Core/Src/ds3231.c ****     while(!(I2C1->ISR & I2C_ISR_TXIS));
+ 321              		.loc 1 67 5 is_stmt 1 view .LVU86
+ 322              	.L13:
+ 323              		.loc 1 67 39 discriminator 1 view .LVU87
+ 324              		.loc 1 67 10 discriminator 1 view .LVU88
+ 325              		.loc 1 67 17 is_stmt 0 discriminator 1 view .LVU89
+ 326 003a 224B     		ldr	r3, .L17
+ 327 003c 9B69     		ldr	r3, [r3, #24]
+ 328              		.loc 1 67 10 discriminator 1 view .LVU90
+ 329 003e 9B07     		lsls	r3, r3, #30
+ 330 0040 FBD5     		bpl	.L13
+  68:Core/Src/ds3231.c ****     I2C1->TXDR = (uint32_t)0x01;              //адрес регистра минут DS3231
+ 331              		.loc 1 68 5 is_stmt 1 view .LVU91
+ 332              		.loc 1 68 16 is_stmt 0 view .LVU92
+ 333 0042 204B     		ldr	r3, .L17
+ 334 0044 0122     		movs	r2, #1
+ 335 0046 9A62     		str	r2, [r3, #40]
+  69:Core/Src/ds3231.c ****     //проверка регистра ISR_NACKF
+ARM GAS  C:\Users\bvv64\AppData\Local\Temp\ccY1Vm8T.s 			page 8
+
+
+  70:Core/Src/ds3231.c ****     while(!(I2C1->ISR & I2C_ISR_TC));   //ожидание завершения передачи
+ 336              		.loc 1 70 5 is_stmt 1 view .LVU93
+ 337              	.L14:
+ 338              		.loc 1 70 37 discriminator 1 view .LVU94
+ 339              		.loc 1 70 10 discriminator 1 view .LVU95
+ 340              		.loc 1 70 17 is_stmt 0 discriminator 1 view .LVU96
+ 341 0048 1E4B     		ldr	r3, .L17
+ 342 004a 9B69     		ldr	r3, [r3, #24]
+ 343              		.loc 1 70 10 discriminator 1 view .LVU97
+ 344 004c 5B06     		lsls	r3, r3, #25
+ 345 004e FBD5     		bpl	.L14
+  71:Core/Src/ds3231.c **** 
+  72:Core/Src/ds3231.c ****     I2C1->CR2 |=I2C_CR2_AUTOEND;    //автозавершение включено
+ 346              		.loc 1 72 5 is_stmt 1 view .LVU98
+ 347              		.loc 1 72 15 is_stmt 0 view .LVU99
+ 348 0050 1C4B     		ldr	r3, .L17
+ 349 0052 5968     		ldr	r1, [r3, #4]
+ 350 0054 8022     		movs	r2, #128
+ 351 0056 9204     		lsls	r2, r2, #18
+ 352 0058 0A43     		orrs	r2, r1
+ 353 005a 5A60     		str	r2, [r3, #4]
+  73:Core/Src/ds3231.c ****     I2C1->CR2 |= I2C_CR2_RD_WRN;    //режим чтения
+ 354              		.loc 1 73 5 is_stmt 1 view .LVU100
+ 355              		.loc 1 73 15 is_stmt 0 view .LVU101
+ 356 005c 5968     		ldr	r1, [r3, #4]
+ 357 005e 8022     		movs	r2, #128
+ 358 0060 D200     		lsls	r2, r2, #3
+ 359 0062 0A43     		orrs	r2, r1
+ 360 0064 5A60     		str	r2, [r3, #4]
+  74:Core/Src/ds3231.c ****     //I2C1->CR2 |= 0<<16;
+  75:Core/Src/ds3231.c ****     I2C1->CR2 &= ~I2C_CR2_NBYTES_Msk;
+ 361              		.loc 1 75 5 is_stmt 1 view .LVU102
+ 362              		.loc 1 75 15 is_stmt 0 view .LVU103
+ 363 0066 5A68     		ldr	r2, [r3, #4]
+ 364 0068 1949     		ldr	r1, .L17+12
+ 365 006a 0A40     		ands	r2, r1
+ 366 006c 5A60     		str	r2, [r3, #4]
+  76:Core/Src/ds3231.c ****     I2C1->CR2 |= (uint32_t)(0x02)<<16;  //будем считывать 2 байта (регист�
+ 367              		.loc 1 76 5 is_stmt 1 view .LVU104
+ 368              		.loc 1 76 15 is_stmt 0 view .LVU105
+ 369 006e 5968     		ldr	r1, [r3, #4]
+ 370 0070 8022     		movs	r2, #128
+ 371 0072 9202     		lsls	r2, r2, #10
+ 372 0074 0A43     		orrs	r2, r1
+ 373 0076 5A60     		str	r2, [r3, #4]
+  77:Core/Src/ds3231.c ****     
+  78:Core/Src/ds3231.c ****     I2C1->CR2 |= I2C_CR2_START;     //старт передачи
+ 374              		.loc 1 78 5 is_stmt 1 view .LVU106
+ 375              		.loc 1 78 15 is_stmt 0 view .LVU107
+ 376 0078 5968     		ldr	r1, [r3, #4]
+ 377 007a 8022     		movs	r2, #128
+ 378 007c 9201     		lsls	r2, r2, #6
+ 379 007e 0A43     		orrs	r2, r1
+ 380 0080 5A60     		str	r2, [r3, #4]
+  79:Core/Src/ds3231.c ****     
+  80:Core/Src/ds3231.c ****     while(!(I2C1->ISR & I2C_ISR_RXNE));
+ 381              		.loc 1 80 5 is_stmt 1 view .LVU108
+ARM GAS  C:\Users\bvv64\AppData\Local\Temp\ccY1Vm8T.s 			page 9
+
+
+ 382              	.L15:
+ 383              		.loc 1 80 39 discriminator 1 view .LVU109
+ 384              		.loc 1 80 10 discriminator 1 view .LVU110
+ 385              		.loc 1 80 17 is_stmt 0 discriminator 1 view .LVU111
+ 386 0082 104B     		ldr	r3, .L17
+ 387 0084 9B69     		ldr	r3, [r3, #24]
+ 388              		.loc 1 80 10 discriminator 1 view .LVU112
+ 389 0086 5B07     		lsls	r3, r3, #29
+ 390 0088 FBD5     		bpl	.L15
+  81:Core/Src/ds3231.c ****     reg_minutes = I2C1->RXDR;
+ 391              		.loc 1 81 5 is_stmt 1 view .LVU113
+ 392              		.loc 1 81 23 is_stmt 0 view .LVU114
+ 393 008a 0E4B     		ldr	r3, .L17
+ 394 008c 5A6A     		ldr	r2, [r3, #36]
+ 395              		.loc 1 81 17 view .LVU115
+ 396 008e D2B2     		uxtb	r2, r2
+ 397              	.LVL2:
+  82:Core/Src/ds3231.c **** 
+  83:Core/Src/ds3231.c ****     while(!(I2C1->ISR & I2C_ISR_RXNE));
+ 398              		.loc 1 83 5 is_stmt 1 view .LVU116
+ 399              	.L16:
+ 400              		.loc 1 83 39 discriminator 1 view .LVU117
+ 401              		.loc 1 83 10 discriminator 1 view .LVU118
+ 402              		.loc 1 83 17 is_stmt 0 discriminator 1 view .LVU119
+ 403 0090 0C4B     		ldr	r3, .L17
+ 404 0092 9B69     		ldr	r3, [r3, #24]
+ 405              		.loc 1 83 10 discriminator 1 view .LVU120
+ 406 0094 5B07     		lsls	r3, r3, #29
+ 407 0096 FBD5     		bpl	.L16
+  84:Core/Src/ds3231.c ****     reg_hours = I2C1->RXDR;
+ 408              		.loc 1 84 5 is_stmt 1 view .LVU121
+ 409              		.loc 1 84 21 is_stmt 0 view .LVU122
+ 410 0098 0A4B     		ldr	r3, .L17
+ 411 009a 5C6A     		ldr	r4, [r3, #36]
+ 412              		.loc 1 84 15 view .LVU123
+ 413 009c E1B2     		uxtb	r1, r4
+ 414              	.LVL3:
+  85:Core/Src/ds3231.c **** 
+  86:Core/Src/ds3231.c ****     time.minutes = 10 * (reg_minutes >> 4) + (reg_minutes & 0x0f);
+ 415              		.loc 1 86 5 is_stmt 1 view .LVU124
+ 416              		.loc 1 86 59 is_stmt 0 view .LVU125
+ 417 009e 0F25     		movs	r5, #15
+ 418 00a0 2800     		movs	r0, r5
+ 419 00a2 1040     		ands	r0, r2
+ 420              		.loc 1 86 44 view .LVU126
+ 421 00a4 1309     		lsrs	r3, r2, #4
+ 422 00a6 9A00     		lsls	r2, r3, #2
+ 423              	.LVL4:
+ 424              		.loc 1 86 44 view .LVU127
+ 425 00a8 9B18     		adds	r3, r3, r2
+ 426 00aa 5A00     		lsls	r2, r3, #1
+ 427 00ac 8218     		adds	r2, r0, r2
+ 428              		.loc 1 86 18 view .LVU128
+ 429 00ae 0948     		ldr	r0, .L17+16
+ 430 00b0 0270     		strb	r2, [r0]
+  87:Core/Src/ds3231.c ****     time.hours = 10 * (reg_hours >> 4) + (reg_hours & 0x0f);
+ 431              		.loc 1 87 5 is_stmt 1 view .LVU129
+ARM GAS  C:\Users\bvv64\AppData\Local\Temp\ccY1Vm8T.s 			page 10
+
+
+ 432              		.loc 1 87 53 is_stmt 0 view .LVU130
+ 433 00b2 2C40     		ands	r4, r5
+ 434              		.loc 1 87 40 view .LVU131
+ 435 00b4 0B09     		lsrs	r3, r1, #4
+ 436 00b6 9A00     		lsls	r2, r3, #2
+ 437 00b8 9B18     		adds	r3, r3, r2
+ 438 00ba 5A00     		lsls	r2, r3, #1
+ 439 00bc A418     		adds	r4, r4, r2
+ 440              		.loc 1 87 16 view .LVU132
+ 441 00be 4470     		strb	r4, [r0, #1]
+  88:Core/Src/ds3231.c **** 
+  89:Core/Src/ds3231.c ****     return &time;
+ 442              		.loc 1 89 5 is_stmt 1 view .LVU133
+  90:Core/Src/ds3231.c **** }
+ 443              		.loc 1 90 1 is_stmt 0 view .LVU134
+ 444              		@ sp needed
+ 445 00c0 30BD     		pop	{r4, r5, pc}
+ 446              	.L18:
+ 447 00c2 C046     		.align	2
+ 448              	.L17:
+ 449 00c4 00540040 		.word	1073763328
+ 450 00c8 FFFFFFFD 		.word	-33554433
+ 451 00cc FFFBFFFF 		.word	-1025
+ 452 00d0 FFFF00FF 		.word	-16711681
+ 453 00d4 00000000 		.word	.LANCHOR0
+ 454              		.cfi_endproc
+ 455              	.LFE336:
+ 457              		.global	__aeabi_uidivmod
+ 458              		.global	__aeabi_uidiv
+ 459              		.section	.text.writeReg_DS3231,"ax",%progbits
+ 460              		.align	1
+ 461              		.global	writeReg_DS3231
+ 462              		.syntax unified
+ 463              		.code	16
+ 464              		.thumb_func
+ 466              	writeReg_DS3231:
+ 467              	.LVL5:
+ 468              	.LFB337:
+  91:Core/Src/ds3231.c **** 
+  92:Core/Src/ds3231.c **** void writeReg_DS3231(addr_register addr, uint8_t value){
+ 469              		.loc 1 92 56 is_stmt 1 view -0
+ 470              		.cfi_startproc
+ 471              		@ args = 0, pretend = 0, frame = 0
+ 472              		@ frame_needed = 0, uses_anonymous_args = 0
+ 473              		.loc 1 92 56 is_stmt 0 view .LVU136
+ 474 0000 70B5     		push	{r4, r5, r6, lr}
+ 475              	.LCFI1:
+ 476              		.cfi_def_cfa_offset 16
+ 477              		.cfi_offset 4, -16
+ 478              		.cfi_offset 5, -12
+ 479              		.cfi_offset 6, -8
+ 480              		.cfi_offset 14, -4
+ 481 0002 0500     		movs	r5, r0
+ 482 0004 0E00     		movs	r6, r1
+  93:Core/Src/ds3231.c **** 
+  94:Core/Src/ds3231.c ****     uint8_t writeToReg = (uint8_t)((value % 10) & 0x0f) | ((value / 10) << 4) ;
+ 483              		.loc 1 94 5 is_stmt 1 view .LVU137
+ARM GAS  C:\Users\bvv64\AppData\Local\Temp\ccY1Vm8T.s 			page 11
+
+
+ 484              		.loc 1 94 26 is_stmt 0 view .LVU138
+ 485 0006 0A21     		movs	r1, #10
+ 486              	.LVL6:
+ 487              		.loc 1 94 26 view .LVU139
+ 488 0008 3000     		movs	r0, r6
+ 489              	.LVL7:
+ 490              		.loc 1 94 26 view .LVU140
+ 491 000a FFF7FEFF 		bl	__aeabi_uidivmod
+ 492              	.LVL8:
+ 493 000e 0F24     		movs	r4, #15
+ 494 0010 0C40     		ands	r4, r1
+ 495              		.loc 1 94 67 view .LVU141
+ 496 0012 0A21     		movs	r1, #10
+ 497 0014 3000     		movs	r0, r6
+ 498 0016 FFF7FEFF 		bl	__aeabi_uidiv
+ 499              	.LVL9:
+ 500 001a C1B2     		uxtb	r1, r0
+ 501              		.loc 1 94 73 view .LVU142
+ 502 001c 0901     		lsls	r1, r1, #4
+ 503              		.loc 1 94 57 view .LVU143
+ 504 001e 0C43     		orrs	r4, r1
+ 505              		.loc 1 94 13 view .LVU144
+ 506 0020 E4B2     		uxtb	r4, r4
+ 507              	.LVL10:
+  95:Core/Src/ds3231.c **** 
+  96:Core/Src/ds3231.c ****     I2C1->CR2 |= I2C_CR2_AUTOEND;
+ 508              		.loc 1 96 5 is_stmt 1 view .LVU145
+ 509              		.loc 1 96 15 is_stmt 0 view .LVU146
+ 510 0022 154B     		ldr	r3, .L23
+ 511 0024 5968     		ldr	r1, [r3, #4]
+ 512 0026 8022     		movs	r2, #128
+ 513 0028 9204     		lsls	r2, r2, #18
+ 514 002a 0A43     		orrs	r2, r1
+ 515 002c 5A60     		str	r2, [r3, #4]
+  97:Core/Src/ds3231.c ****     I2C1->CR2 &= ~I2C_CR2_RD_WRN;           //режим записи
+ 516              		.loc 1 97 5 is_stmt 1 view .LVU147
+ 517              		.loc 1 97 15 is_stmt 0 view .LVU148
+ 518 002e 5A68     		ldr	r2, [r3, #4]
+ 519 0030 1249     		ldr	r1, .L23+4
+ 520 0032 0A40     		ands	r2, r1
+ 521 0034 5A60     		str	r2, [r3, #4]
+  98:Core/Src/ds3231.c ****     I2C1->CR2 &= ~I2C_CR2_NBYTES_Msk;
+ 522              		.loc 1 98 5 is_stmt 1 view .LVU149
+ 523              		.loc 1 98 15 is_stmt 0 view .LVU150
+ 524 0036 5A68     		ldr	r2, [r3, #4]
+ 525 0038 1149     		ldr	r1, .L23+8
+ 526 003a 0A40     		ands	r2, r1
+ 527 003c 5A60     		str	r2, [r3, #4]
+  99:Core/Src/ds3231.c ****     I2C1->CR2 |= (uint32_t)(0x02)<<16;  
+ 528              		.loc 1 99 5 is_stmt 1 view .LVU151
+ 529              		.loc 1 99 15 is_stmt 0 view .LVU152
+ 530 003e 5968     		ldr	r1, [r3, #4]
+ 531 0040 8022     		movs	r2, #128
+ 532 0042 9202     		lsls	r2, r2, #10
+ 533 0044 0A43     		orrs	r2, r1
+ 534 0046 5A60     		str	r2, [r3, #4]
+ 100:Core/Src/ds3231.c ****     while(!(I2C1->ISR & I2C_ISR_TXE));      //ожидание освобождения регис�
+ARM GAS  C:\Users\bvv64\AppData\Local\Temp\ccY1Vm8T.s 			page 12
+
+
+ 535              		.loc 1 100 5 is_stmt 1 view .LVU153
+ 536              	.L20:
+ 537              		.loc 1 100 38 discriminator 1 view .LVU154
+ 538              		.loc 1 100 10 discriminator 1 view .LVU155
+ 539              		.loc 1 100 17 is_stmt 0 discriminator 1 view .LVU156
+ 540 0048 0B4B     		ldr	r3, .L23
+ 541 004a 9B69     		ldr	r3, [r3, #24]
+ 542              		.loc 1 100 10 discriminator 1 view .LVU157
+ 543 004c DB07     		lsls	r3, r3, #31
+ 544 004e FBD5     		bpl	.L20
+ 101:Core/Src/ds3231.c ****     
+ 102:Core/Src/ds3231.c ****     I2C1->CR2 |= I2C_CR2_START;             //старт передачи
+ 545              		.loc 1 102 5 is_stmt 1 view .LVU158
+ 546              		.loc 1 102 15 is_stmt 0 view .LVU159
+ 547 0050 094A     		ldr	r2, .L23
+ 548 0052 5168     		ldr	r1, [r2, #4]
+ 549 0054 8023     		movs	r3, #128
+ 550 0056 9B01     		lsls	r3, r3, #6
+ 551 0058 0B43     		orrs	r3, r1
+ 552 005a 5360     		str	r3, [r2, #4]
+ 103:Core/Src/ds3231.c ****     while(!(I2C1->ISR & I2C_ISR_TXIS));
+ 553              		.loc 1 103 5 is_stmt 1 view .LVU160
+ 554              	.L21:
+ 555              		.loc 1 103 39 discriminator 1 view .LVU161
+ 556              		.loc 1 103 10 discriminator 1 view .LVU162
+ 557              		.loc 1 103 17 is_stmt 0 discriminator 1 view .LVU163
+ 558 005c 064B     		ldr	r3, .L23
+ 559 005e 9B69     		ldr	r3, [r3, #24]
+ 560              		.loc 1 103 10 discriminator 1 view .LVU164
+ 561 0060 9B07     		lsls	r3, r3, #30
+ 562 0062 FBD5     		bpl	.L21
+ 104:Core/Src/ds3231.c ****     I2C1->TXDR = (uint32_t)addr;            //адрес регистра минут DS3231
+ 563              		.loc 1 104 5 is_stmt 1 view .LVU165
+ 564              		.loc 1 104 16 is_stmt 0 view .LVU166
+ 565 0064 044B     		ldr	r3, .L23
+ 566 0066 9D62     		str	r5, [r3, #40]
+ 105:Core/Src/ds3231.c ****     while(!(I2C1->ISR & I2C_ISR_TXIS));
+ 567              		.loc 1 105 5 is_stmt 1 view .LVU167
+ 568              	.L22:
+ 569              		.loc 1 105 39 discriminator 1 view .LVU168
+ 570              		.loc 1 105 10 discriminator 1 view .LVU169
+ 571              		.loc 1 105 17 is_stmt 0 discriminator 1 view .LVU170
+ 572 0068 034B     		ldr	r3, .L23
+ 573 006a 9B69     		ldr	r3, [r3, #24]
+ 574              		.loc 1 105 10 discriminator 1 view .LVU171
+ 575 006c 9B07     		lsls	r3, r3, #30
+ 576 006e FBD5     		bpl	.L22
+ 106:Core/Src/ds3231.c ****     I2C1->TXDR = (uint32_t)writeToReg;
+ 577              		.loc 1 106 5 is_stmt 1 view .LVU172
+ 578              		.loc 1 106 16 is_stmt 0 view .LVU173
+ 579 0070 014B     		ldr	r3, .L23
+ 580 0072 9C62     		str	r4, [r3, #40]
+ 107:Core/Src/ds3231.c **** }
+ 581              		.loc 1 107 1 view .LVU174
+ 582              		@ sp needed
+ 583              	.LVL11:
+ 584              		.loc 1 107 1 view .LVU175
+ARM GAS  C:\Users\bvv64\AppData\Local\Temp\ccY1Vm8T.s 			page 13
+
+
+ 585 0074 70BD     		pop	{r4, r5, r6, pc}
+ 586              	.L24:
+ 587 0076 C046     		.align	2
+ 588              	.L23:
+ 589 0078 00540040 		.word	1073763328
+ 590 007c FFFBFFFF 		.word	-1025
+ 591 0080 FFFF00FF 		.word	-16711681
+ 592              		.cfi_endproc
+ 593              	.LFE337:
+ 595              		.section	.text.getDate,"ax",%progbits
+ 596              		.align	1
+ 597              		.global	getDate
+ 598              		.syntax unified
+ 599              		.code	16
+ 600              		.thumb_func
+ 602              	getDate:
+ 603              	.LFB338:
+ 108:Core/Src/ds3231.c **** 
+ 109:Core/Src/ds3231.c **** uint8_t getDate(void){
+ 604              		.loc 1 109 22 is_stmt 1 view -0
+ 605              		.cfi_startproc
+ 606              		@ args = 0, pretend = 0, frame = 0
+ 607              		@ frame_needed = 0, uses_anonymous_args = 0
+ 608 0000 10B5     		push	{r4, lr}
+ 609              	.LCFI2:
+ 610              		.cfi_def_cfa_offset 8
+ 611              		.cfi_offset 4, -8
+ 612              		.cfi_offset 14, -4
+ 110:Core/Src/ds3231.c ****     uint8_t date_reg = readReg_DS3231(DATE);
+ 613              		.loc 1 110 5 view .LVU177
+ 614              		.loc 1 110 24 is_stmt 0 view .LVU178
+ 615 0002 0420     		movs	r0, #4
+ 616 0004 FFF7FEFF 		bl	readReg_DS3231
+ 617              	.LVL12:
+ 111:Core/Src/ds3231.c ****     return 10 * (date_reg >> 4) + (date_reg & 0x0f);
+ 618              		.loc 1 111 5 is_stmt 1 view .LVU179
+ 619              		.loc 1 111 45 is_stmt 0 view .LVU180
+ 620 0008 0F23     		movs	r3, #15
+ 621 000a 0340     		ands	r3, r0
+ 622              		.loc 1 111 33 view .LVU181
+ 623 000c 0009     		lsrs	r0, r0, #4
+ 624              	.LVL13:
+ 625              		.loc 1 111 33 view .LVU182
+ 626 000e 8200     		lsls	r2, r0, #2
+ 627 0010 8018     		adds	r0, r0, r2
+ 628 0012 4000     		lsls	r0, r0, #1
+ 629 0014 1818     		adds	r0, r3, r0
+ 630 0016 C0B2     		uxtb	r0, r0
+ 112:Core/Src/ds3231.c **** }
+ 631              		.loc 1 112 1 view .LVU183
+ 632              		@ sp needed
+ 633 0018 10BD     		pop	{r4, pc}
+ 634              		.cfi_endproc
+ 635              	.LFE338:
+ 637              		.section	.text.getMonth,"ax",%progbits
+ 638              		.align	1
+ 639              		.global	getMonth
+ARM GAS  C:\Users\bvv64\AppData\Local\Temp\ccY1Vm8T.s 			page 14
+
+
+ 640              		.syntax unified
+ 641              		.code	16
+ 642              		.thumb_func
+ 644              	getMonth:
+ 645              	.LFB339:
+ 113:Core/Src/ds3231.c **** 
+ 114:Core/Src/ds3231.c **** uint8_t getMonth(void){
+ 646              		.loc 1 114 23 is_stmt 1 view -0
+ 647              		.cfi_startproc
+ 648              		@ args = 0, pretend = 0, frame = 0
+ 649              		@ frame_needed = 0, uses_anonymous_args = 0
+ 650 0000 10B5     		push	{r4, lr}
+ 651              	.LCFI3:
+ 652              		.cfi_def_cfa_offset 8
+ 653              		.cfi_offset 4, -8
+ 654              		.cfi_offset 14, -4
+ 115:Core/Src/ds3231.c ****     uint8_t month_reg = readReg_DS3231(MONTH_CENTURY);
+ 655              		.loc 1 115 5 view .LVU185
+ 656              		.loc 1 115 25 is_stmt 0 view .LVU186
+ 657 0002 0520     		movs	r0, #5
+ 658 0004 FFF7FEFF 		bl	readReg_DS3231
+ 659              	.LVL14:
+ 116:Core/Src/ds3231.c ****     return 10 * (month_reg >> 4) + (month_reg & 0x0f);
+ 660              		.loc 1 116 5 is_stmt 1 view .LVU187
+ 661              		.loc 1 116 47 is_stmt 0 view .LVU188
+ 662 0008 0F23     		movs	r3, #15
+ 663 000a 0340     		ands	r3, r0
+ 664              		.loc 1 116 34 view .LVU189
+ 665 000c 0009     		lsrs	r0, r0, #4
+ 666              	.LVL15:
+ 667              		.loc 1 116 34 view .LVU190
+ 668 000e 8200     		lsls	r2, r0, #2
+ 669 0010 8018     		adds	r0, r0, r2
+ 670 0012 4000     		lsls	r0, r0, #1
+ 671 0014 1818     		adds	r0, r3, r0
+ 672 0016 C0B2     		uxtb	r0, r0
+ 117:Core/Src/ds3231.c **** }
+ 673              		.loc 1 117 1 view .LVU191
+ 674              		@ sp needed
+ 675 0018 10BD     		pop	{r4, pc}
+ 676              		.cfi_endproc
+ 677              	.LFE339:
+ 679              		.section	.text.getYear,"ax",%progbits
+ 680              		.align	1
+ 681              		.global	getYear
+ 682              		.syntax unified
+ 683              		.code	16
+ 684              		.thumb_func
+ 686              	getYear:
+ 687              	.LFB340:
+ 118:Core/Src/ds3231.c **** 
+ 119:Core/Src/ds3231.c **** uint8_t getYear(void){
+ 688              		.loc 1 119 22 is_stmt 1 view -0
+ 689              		.cfi_startproc
+ 690              		@ args = 0, pretend = 0, frame = 0
+ 691              		@ frame_needed = 0, uses_anonymous_args = 0
+ 692 0000 10B5     		push	{r4, lr}
+ARM GAS  C:\Users\bvv64\AppData\Local\Temp\ccY1Vm8T.s 			page 15
+
+
+ 693              	.LCFI4:
+ 694              		.cfi_def_cfa_offset 8
+ 695              		.cfi_offset 4, -8
+ 696              		.cfi_offset 14, -4
+ 120:Core/Src/ds3231.c ****     uint8_t year_reg = readReg_DS3231(YEAR);
+ 697              		.loc 1 120 5 view .LVU193
+ 698              		.loc 1 120 24 is_stmt 0 view .LVU194
+ 699 0002 0620     		movs	r0, #6
+ 700 0004 FFF7FEFF 		bl	readReg_DS3231
+ 701              	.LVL16:
+ 121:Core/Src/ds3231.c ****     return 10 * (year_reg >> 4) + (year_reg & 0x0f);
+ 702              		.loc 1 121 5 is_stmt 1 view .LVU195
+ 703              		.loc 1 121 45 is_stmt 0 view .LVU196
+ 704 0008 0F23     		movs	r3, #15
+ 705 000a 0340     		ands	r3, r0
+ 706              		.loc 1 121 33 view .LVU197
+ 707 000c 0009     		lsrs	r0, r0, #4
+ 708              	.LVL17:
+ 709              		.loc 1 121 33 view .LVU198
+ 710 000e 8200     		lsls	r2, r0, #2
+ 711 0010 8018     		adds	r0, r0, r2
+ 712 0012 4000     		lsls	r0, r0, #1
+ 713 0014 1818     		adds	r0, r3, r0
+ 714 0016 C0B2     		uxtb	r0, r0
+ 122:Core/Src/ds3231.c **** }
+ 715              		.loc 1 122 1 view .LVU199
+ 716              		@ sp needed
+ 717 0018 10BD     		pop	{r4, pc}
+ 718              		.cfi_endproc
+ 719              	.LFE340:
+ 721              		.global	time
+ 722              		.section	.bss.time,"aw",%nobits
+ 723              		.align	2
+ 724              		.set	.LANCHOR0,. + 0
+ 727              	time:
+ 728 0000 0000     		.space	2
+ 729              		.text
+ 730              	.Letext0:
+ 731              		.file 2 "c:\\gnu_mcu\\xpack-arm-none-eabi-gcc-10.3.1-2.3\\arm-none-eabi\\include\\machine\\_defaul
+ 732              		.file 3 "c:\\gnu_mcu\\xpack-arm-none-eabi-gcc-10.3.1-2.3\\arm-none-eabi\\include\\sys\\_stdint.h"
+ 733              		.file 4 "Drivers/CMSIS/Device/ST/STM32F0xx/Include/stm32f030x6.h"
+ 734              		.file 5 "Core/Inc/ds3231.h"
+ 735              		.file 6 "Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ll_dma.h"
+ARM GAS  C:\Users\bvv64\AppData\Local\Temp\ccY1Vm8T.s 			page 16
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 ds3231.c
+C:\Users\bvv64\AppData\Local\Temp\ccY1Vm8T.s:18     .text.init_DS3231:0000000000000000 $t
+C:\Users\bvv64\AppData\Local\Temp\ccY1Vm8T.s:24     .text.init_DS3231:0000000000000000 init_DS3231
+C:\Users\bvv64\AppData\Local\Temp\ccY1Vm8T.s:102    .text.init_DS3231:000000000000005c $d
+C:\Users\bvv64\AppData\Local\Temp\ccY1Vm8T.s:110    .text.readReg_DS3231:0000000000000000 $t
+C:\Users\bvv64\AppData\Local\Temp\ccY1Vm8T.s:116    .text.readReg_DS3231:0000000000000000 readReg_DS3231
+C:\Users\bvv64\AppData\Local\Temp\ccY1Vm8T.s:250    .text.readReg_DS3231:0000000000000090 $d
+C:\Users\bvv64\AppData\Local\Temp\ccY1Vm8T.s:258    .text.getMinutesHours:0000000000000000 $t
+C:\Users\bvv64\AppData\Local\Temp\ccY1Vm8T.s:264    .text.getMinutesHours:0000000000000000 getMinutesHours
+C:\Users\bvv64\AppData\Local\Temp\ccY1Vm8T.s:449    .text.getMinutesHours:00000000000000c4 $d
+C:\Users\bvv64\AppData\Local\Temp\ccY1Vm8T.s:460    .text.writeReg_DS3231:0000000000000000 $t
+C:\Users\bvv64\AppData\Local\Temp\ccY1Vm8T.s:466    .text.writeReg_DS3231:0000000000000000 writeReg_DS3231
+C:\Users\bvv64\AppData\Local\Temp\ccY1Vm8T.s:589    .text.writeReg_DS3231:0000000000000078 $d
+C:\Users\bvv64\AppData\Local\Temp\ccY1Vm8T.s:596    .text.getDate:0000000000000000 $t
+C:\Users\bvv64\AppData\Local\Temp\ccY1Vm8T.s:602    .text.getDate:0000000000000000 getDate
+C:\Users\bvv64\AppData\Local\Temp\ccY1Vm8T.s:638    .text.getMonth:0000000000000000 $t
+C:\Users\bvv64\AppData\Local\Temp\ccY1Vm8T.s:644    .text.getMonth:0000000000000000 getMonth
+C:\Users\bvv64\AppData\Local\Temp\ccY1Vm8T.s:680    .text.getYear:0000000000000000 $t
+C:\Users\bvv64\AppData\Local\Temp\ccY1Vm8T.s:686    .text.getYear:0000000000000000 getYear
+C:\Users\bvv64\AppData\Local\Temp\ccY1Vm8T.s:727    .bss.time:0000000000000000 time
+C:\Users\bvv64\AppData\Local\Temp\ccY1Vm8T.s:723    .bss.time:0000000000000000 $d
+
+UNDEFINED SYMBOLS
+__aeabi_uidivmod
+__aeabi_uidiv
